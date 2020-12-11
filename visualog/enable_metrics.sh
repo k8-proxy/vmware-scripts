@@ -1,8 +1,9 @@
 #!/bin/sh
 
-sudo su -
+set -eux
+
 git clone https://github.com/k8-proxy/vmware-scripts
-cd visualog
+cd vmware-scripts/visualog
 wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
 tar xvzf node_exporter-1.0.1.linux-amd64.tar.gz
 cp node_exporter-1.0.1.linux-amd64/node_exporter /usr/sbin/
@@ -13,4 +14,4 @@ cp monitoring-scripts/node_exporter.config /etc/prometheus/node_exporter.config
 systemctl daemon-reload
 systemctl enable node_exporter
 systemctl start node_exporter
-systemctl status node_exporter
+systemctl status node_exporter --no-pager
