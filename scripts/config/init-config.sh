@@ -8,4 +8,7 @@ grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -iE "s/GRUB_CM
 sudo update-grub
 git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
 sudo install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
-install -T ~/scripts/scripts/pw-reset-onlogin/pw-reset-onlogin.sh /tmp/pw-reset-onlogin.sh -m 0755
+sudo cp -f ~/scripts/scripts/bootscript/initconfig.service /etc/systemd/system/initconfig.service
+sudo cp -f ~/scripts/scripts/bootscript/initconfig.sh /usr/local/bin/initconfig.sh
+sudo systemctl daemon-reload
+sudo systemctl enable initconfig

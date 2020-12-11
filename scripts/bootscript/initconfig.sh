@@ -1,17 +1,14 @@
 #!/bin/bash
-
 sleep 10
 clear
 echo "
 
-
-
-InitConfig
+Initial configuration
 
 "
 
 #nowe haslo dla uzytkownika glasswall
-/usr/bin/wizard.sh
+/usr/local/bin/wizard
 
 systemctl disable initconfig
 
