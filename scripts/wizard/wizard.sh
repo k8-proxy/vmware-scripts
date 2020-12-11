@@ -22,6 +22,7 @@ esac
 }
 
 function chpass_dialog () {
+USER=glasswall
 npw1=$(dialog $DIALOG_OPTS --ok-label "Submit" --insecure --passwordbox "New password for $USER" 0 0 )
 npw2=$(dialog $DIALOG_OPTS --ok-label "Submit" --insecure --passwordbox "Confirm password for $USER" 0 0 )
 echo -e "$npw1\n$npw2" | sudo passwd $USER 2>/dev/null || errorbox "Failed to change password"
@@ -49,11 +50,12 @@ if [ "$(ls /etc/netplan/*.yaml /etc/netplan/*.yml 2>/dev/null |  tail -n1 | wc -
 sudo mv /etc/netplan/*.yaml /etc/netplan.backup 2>/dev/null || true
 sudo mv /etc/netplan/*.yml /etc/netplan.backup 2>/dev/null || true
 fi
+ifname=`ip l | awk '/^[1-9]/ {sub(":","",$2);if ($2=="lo") next; print $2;nextfile}'`
 sudo tee /etc/netplan/$(date +%F-%H_%M).yaml <<EOF >/dev/null
 network:
   version: 2
   ethernets:
-    eth0:
+    $ifname:
       addresses:
       - $ip
       nameservers:
