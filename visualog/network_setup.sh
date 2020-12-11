@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ "$#" -ne 4 ]; then
+    echo "Usage: network_setup.sh 192.168.0.123 24 192.168.0.1 8.8.8.8"
+fi
+
 IP_ADDRESS=$1
 NETMASK=$2
 GATEWAY=$3
