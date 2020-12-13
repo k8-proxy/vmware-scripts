@@ -5,6 +5,7 @@ sudo rm -f /var/lib/apt/lists/*
 sudo apt clean all
 sudo rm -f /etc/ssh/*_key
 sudo rm -f /etc/ssh/*.pub
+sudo rm -f /home/*/.ssh/*
 # Logs clean up
 sudo logrotate --force /etc/logrotate.conf
 sudo journalctl --rotate && sudo journalctl --vacuum-size=1
