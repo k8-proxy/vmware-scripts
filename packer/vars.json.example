@@ -1,0 +1,12 @@
+{
+"hostname":       "glasswall",
+"domain":         "local",
+"ssh_user":       "glasswall",
+"ssh_pass":       "Gl@$$wall",
+"cd_dir":         "cdrom",
+"esxi_host":      "esxi.example.com",
+"esxi_datastore": "datastore1",
+"esxi_username":  "root",
+"esxi_password":  "changeme",
+"vswitch":        "VM"
+}
