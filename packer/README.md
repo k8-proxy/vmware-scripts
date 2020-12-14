@@ -19,6 +19,7 @@ the machine running this packer template must have the following installed
 
 ### Usage
 
+- Run the following
 ```bash
 git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts
 cd vmware-scripts/packer/
@@ -28,3 +29,4 @@ cp cdrom/user-data.example cdrom/user-data
 nano cdrom/user-data # then tweak parameters indicated in commentss needed. and exit
 PACKER_LOG=1 PACKER_LOG_PATH=packer.log packer build -on-error=ask -var-file=vars.json esxi.json
 ```
+- You should be able to find the ova under output-vmware-iso
