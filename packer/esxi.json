@@ -23,10 +23,10 @@
             "vnc_over_websocket": true,
             "insecure_connection": true,
             "shutdown_command": "sudo poweroff",
-            "boot_wait": "5s",
+            "boot_wait": "4s",
             "boot_command": [
                     "<enter><enter><f6><esc><wait>",
-                "autoinstall ds=nocloud-net",
+                    "autoinstall ds=nocloud-net",
                     "<enter><wait>"
             ],
             "remote_type": "esx5",
