@@ -26,5 +26,5 @@ cp vars.json.example vars.json
 nano vars.json # then tweak parameters as needed, and exit
 cp cdrom/user-data.example cdrom/user-data
 nano cdrom/user-data # then tweak parameters indicated in commentss needed. and exit
-packer build -on-error=ask -var-file=vars.json esxi.json
+PACKER_LOG=1 PACKER_LOG_PATH=packer.log packer build -on-error=ask -var-file=vars.json esxi.json
 ```
