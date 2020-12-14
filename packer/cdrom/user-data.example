@@ -1,0 +1,35 @@
+#cloud-config
+autoinstall:
+  version: 1
+  early-commands:
+  - systemctl stop ssh
+  locale: en_US
+  keyboard:
+    layout: en
+    variant: us
+  network:
+    network:
+      renderer: networkd
+      version: 2
+      ethernets:
+        ens33:
+          dhcp4: false
+          addresses:
+          - IPADDRESS/NETMASK # Replace with IP Address / Netmask bits (CIDR format), ex: 192.168.1.2/24
+          gateway4: GATEWAY # Replace with Gateway
+          nameservers:
+            addresses:
+            - NAMESERVER # Replace with DNS resolver
+  storage:
+    layout:
+      name: direct
+  identity:
+    hostname: glasswall
+    username: glasswall
+    password: $6$rounds=9999$hdrPPvhfORsZYmcV$tAc1fs41kP70oA3r2GAHq8.58ErH4K/MDMbnBZDax0YJ8LEa2/BJ.Zu6eWC6QZp1j1tmDM8n5u77zWb03HR5N0 # SHA512 hash of "Gl@$$wall" , you can create similar hashes by running "mkpasswd -m sha512crypt -R 9999"
+  ssh:
+    install-server: yes
+  user-data:
+    disable_root: false
+  late-commands:
+    - echo 'glasswall ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu

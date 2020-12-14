@@ -12,3 +12,4 @@ sudo cp -f ~/scripts/scripts/bootscript/initconfig.service /etc/systemd/system/i
 sudo install -T ~/scripts/scripts/bootscript/initconfig.sh /usr/local/bin/initconfig.sh -m 0755
 sudo systemctl daemon-reload
 sudo systemctl enable initconfig
+rm -rf ~/scripts/

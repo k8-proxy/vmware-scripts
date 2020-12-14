@@ -1,0 +1,92 @@
+{
+    "variables": {},
+    "builders": [
+        {
+            "type": "vmware-iso",
+            "guest_os_type": "ubuntu-64",
+            "vm_name": "ubuntu-base-gw",
+            "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.1-live-server-amd64.iso",
+            "iso_checksum":"file:https://releases.ubuntu.com/focal/SHA256SUMS",
+            "memory": "2048",
+            "cpus": "2",
+            "disk_size": "50000",
+            "format": "ova",
+            "headless": "false",
+            "http_directory": "http",
+            "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
+            "cd_label": "cidata",
+            "ssh_host":"{{ user `ssh_host` }}",
+            "ssh_username": "{{user `ssh_user`}}",
+            "ssh_password": "Gl@$$wall",
+            "ssh_timeout": "10m",
+            "pause_before_connecting": "3m",
+            "vnc_over_websocket": true,
+            "insecure_connection": true,
+            "shutdown_command": "sudo poweroff",
+            "boot_wait": "5s",
+            "boot_command": [
+                    "<enter><enter><f6><esc><wait>",
+                "autoinstall ds=nocloud-net",
+                    "<enter><wait>"
+            ],
+            "remote_type": "esx5",
+            "remote_host": "{{user `esxi_host`}}",
+            "remote_datastore": "{{user `esxi_datastore`}}",
+            "remote_username":  "{{user `esxi_username`}}",
+            "remote_password":  "{{user `esxi_password`}}",
+            "keep_registered":  true,
+            "skip_validate_credentials":true,
+
+            "vmx_data": {
+                    "ethernet0.networkName": "{{user `vswitch`}}",
+                    "ethernet0.present": "TRUE",
+                    "ethernet0.startConnected": "TRUE",
+                    "ethernet0.virtualDev": "e1000",
+                    "ethernet0.addressType": "generated",
+                    "ethernet0.generatedAddressOffset": "0",
+                    "ethernet0.wakeOnPcktRcv": "FALSE",
+                    "virtualHW.version":"13",
+                    "virtualhw.productcompatibility":"esx"
+            }
+        }
+    ],
+    "provisioners": [{
+        "type": "shell",
+        "inline": [
+            "sudo apt update",
+            "sudo apt upgrade -y"
+            ]
+    },
+    {
+        "type": "shell",
+        "script": "scripts/network/network.sh",
+        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+    },
+    {
+        "type": "shell",
+        "script": "scripts/config/init-config.sh",
+        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+    },
+
+    {
+        "type": "file",
+        "source":"./setup",
+        "destination":"/tmp/"
+    },
+    {
+        "type": "shell",
+        "inline": [
+            "chmod +x /tmp/setup/setup.sh",
+            "cd /tmp/setup",
+            "./setup.sh"
+        ]
+    },
+
+    {
+        "type": "shell",
+        "script": "scripts/cleanup/cleanup.sh",
+        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+    }
+    ]
+
+}

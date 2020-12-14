@@ -1,0 +1,5 @@
+vars.json
+packer.log
+packer_cache/
+output-vmware-iso/
+**.bak
