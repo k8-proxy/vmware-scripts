@@ -15,7 +15,7 @@
             "http_directory": "http",
             "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
             "cd_label": "cidata",
-            "ssh_host":"91.109.25.80",
+            "ssh_host":"{{ user `ssh_host` }}",
             "ssh_username": "{{user `ssh_user`}}",
             "ssh_password": "Gl@$$wall",
             "ssh_timeout": "10m",
