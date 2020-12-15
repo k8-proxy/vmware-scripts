@@ -65,7 +65,7 @@
     {
         "type": "shell",
         "script": "scripts/config/init-config.sh",
-        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+        "execute_command": "chmod +x {{.Path}}; {{.Path}}"
     },
 
     {
