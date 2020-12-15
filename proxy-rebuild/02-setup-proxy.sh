@@ -37,3 +37,7 @@ helm upgrade --install \
 --set ingress.tls.crt=$crt \
 --set ingress.tls.key=$key \
 reverse-proxy /home/glasswall/s-k8-proxy-rebuild/stable-src/chart/
+
+echo ""
+echo "Add below line to your system's host file and browse the websites in the firefox"
+echo "vm_ip_address glasswallsolutions.com www.glasswallsolutions.com example.local www.example.local gov.uk www.gov.uk assets.publishing.service.gov.uk owasp.org www.owasp.org"
