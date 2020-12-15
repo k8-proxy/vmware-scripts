@@ -9,5 +9,8 @@
 "esxi_username":  "root",
 "esxi_password":  "changeme",
 "vswitch":        "VM",
-"ssh_host":       "192.168.1.2"
+"ssh_host":       "192.168.1.2",
+"vm_name":        "ubuntu-base-gw",
+"memory":          "2048",
+"cpu":             "2"
 }
