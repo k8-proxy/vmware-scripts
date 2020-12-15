@@ -31,7 +31,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable initconfig
 
 # install node exporter
-wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz -qO- | tar -C /tmp/ xz
+wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz -qO- | tar xz -C /tmp/
 sudo install -T /tmp/node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/node_exporter -m 0755
 
 # create node exporter user
