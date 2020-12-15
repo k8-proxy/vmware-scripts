@@ -19,7 +19,7 @@
             "ssh_username": "{{user `ssh_user`}}",
             "ssh_password": "Gl@$$wall",
             "ssh_timeout": "10m",
-            "pause_before_connecting": "3m",
+            "pause_before_connecting": "10s",
             "vnc_over_websocket": true,
             "insecure_connection": true,
             "shutdown_command": "sudo poweroff",
