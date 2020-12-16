@@ -1,0 +1,23 @@
+hosts:
+  - address: 8.8.8.8
+    prot: "icmp"
+  - address: google.com
+    prot: icmp
+  - address: google.com
+    prot: httpstatus
+    httpstatus: 200
+  - prot: icmp
+  - address: google.com
+    prot: httpstring
+    httpstring: google
+  - address: 192.0.2.253
+    prot: icmp
+  - address: 8.8.8.8
+    prot: tcp
+    tcpport: 53
+  - address: 8.8.8.8
+    prot: tcp
+    tcpport: 80
+  - address: google.com
+    prot: tcp
+    tcpport: 80
