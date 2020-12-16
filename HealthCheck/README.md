@@ -8,6 +8,10 @@ This script can be used to check Health of automaticly created solutions in pipe
 * http/https code status check (eg. 200)
 * http/https return string check
 
+### Install
+```bash
+sh <(curl -s https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh || wget -q -O - https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh)
+```
 ### Usage
 
 Edit config.yml with checks and run using:
