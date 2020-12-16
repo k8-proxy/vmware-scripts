@@ -15,3 +15,7 @@ run using:
 ```bash
 python3 pyCheck.py
 ```
+If you want to display how many checks fails use:
+```bash
+echo $?
+```
