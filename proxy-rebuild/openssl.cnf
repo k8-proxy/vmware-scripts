@@ -1,0 +1,39 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+countryName = GB
+countryName_default = GB
+stateOrProvinceName = London
+stateOrProvinceName_default = London
+localityName = 
+localityName_default = 
+organizationName = Glasswall Solutions Ltd.
+organizationName_default = Glasswall Solutions Ltd.
+organizationalUnitName = Glasswall Solutions Ltd.
+organizationalUnitName_default = Glasswall Solutions Ltd.
+commonName = glasswall-icap.com
+commonName_default = glasswall-icap.com
+commonName_max = 64
+
+[CA]
+copy_extensions = copy
+
+[ v3_req ]
+# Extensions to add to a certificate request
+keyUsage = critical, digitalSignature, keyAgreement, keyCertSign, cRLSign, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = gov.uk 
+DNS.2 = www.gov.uk
+DNS.3 = assets.publishing.service.gov.uk
+DNS.4 = www.glasswallsolutions.com
+DNS.5 = glasswallsolutions.com
+DNS.6 = owasp.org
+DNS.7 = www.owasp.org
+DNS.8 = example.local
+DNS.9 = www.example.local
+
