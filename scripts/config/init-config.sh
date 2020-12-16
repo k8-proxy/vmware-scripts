@@ -38,11 +38,11 @@ sudo install -T /tmp/node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bi
 sudo useradd node_exporter -s /sbin/nologin
 
 # create node exporter service
-sudo cp ~/scripts/visuallog/monitoring-scripts/node_exporter.service /etc/systemd/system/node_exporter.service
+sudo cp ~/scripts/visualog/monitoring-scripts/node_exporter.service /etc/systemd/system/node_exporter.service
 sudo mkdir -p /etc/prometheus
 
 # install node exporter configuration
-sudo cp ~/scripts/visuallog/monitoring-scripts/node_exporter.config /etc/prometheus/node_exporter.config
+sudo cp ~/scripts/visualog/monitoring-scripts/node_exporter.config /etc/prometheus/node_exporter.config
 sudo systemctl daemon-reload
 
 # start and enable node_exporter service

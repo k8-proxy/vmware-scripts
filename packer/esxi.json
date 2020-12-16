@@ -18,7 +18,7 @@
             "ssh_host":"{{ user `ssh_host` }}",
             "ssh_username": "{{user `ssh_user`}}",
             "ssh_password": "Gl@$$wall",
-            "ssh_timeout": "10m",
+            "ssh_timeout": "15m",
             "pause_before_connecting": "10s",
             "vnc_over_websocket": true,
             "insecure_connection": true,
