@@ -10,8 +10,7 @@ This script can be used to check Health of automaticly created solutions in pipe
 
 ### Usage
 
-Edit config.yml with checks.
-run using:
+Edit config.yml with checks and run using:
 ```bash
 python3 pyCheck.py
 ```
