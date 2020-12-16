@@ -14,6 +14,11 @@ sudo apt install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed g
 
 # switching to predictable network interfaces naming
 grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -Ei "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 $KERNEL_BOOT_LINE\"/g" /etc/default/grub
+
+# remove swap 
+sudo swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab && echo Swap removed
+
+# update grub
 sudo update-grub
 
 # cloning vmware scripts repo
