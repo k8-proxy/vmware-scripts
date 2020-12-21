@@ -23,7 +23,7 @@ exit
 
 ### Download and install solution
 ```bash
-gitclone https://github.com/MariuszFerdyn/vmware-scripts.git
+git clone --recursive https://github.com/MariuszFerdyn/vmware-scripts.git
 cd vmware-scripts/HealthFunctionalTests/filedrop
 npm ci
 ```
