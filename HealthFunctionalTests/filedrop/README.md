@@ -33,10 +33,14 @@ npm ci
 npm test
 ```
 
-Please ignore save files error - just check test successfull message.
+Please ignore save files error - just check test successfull message or in CI/CD you can use errorlevel:
+```bash
+npm test 2>&1 | grep ' All specs passed! '
+echo $?
+```
 
 ### On Desktop - visual interface 
 ```bash
 npm start
 ```
-File with test vmware-scripts/HealthFunctionalTests/filedrop/cypress/integration/filedrop.spec.js
+File with test scenario vmware-scripts/HealthFunctionalTests/filedrop/cypress/integration/filedrop.spec.js
