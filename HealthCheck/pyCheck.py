@@ -9,6 +9,16 @@ import socket
 import requests
 import re
 import logging
+import random
+import string
+import hashlib
+import os
+
+def checksum(filename, hashfunc):
+    with open(filename,"rb") as f:
+        for byte_block in iter(lambda: f.read(4096),b""):
+            hashfunc.update(byte_block)
+    return hashfunc.hexdigest()
 
 def main(args):
     retcode = 0
@@ -21,12 +31,12 @@ def main(args):
 
     with open('config.yml') as file:
         config = yaml.load(file, Loader=yaml.Loader)
-
+    
     for i in config['hosts']:
         try:
             addr = i['address']
             try:
-                addr = ipaddress.ip_address(addr)
+                addr = str(ipaddress.ip_address(addr))
             except ValueError:
                 url = urllib.parse.urlparse(addr,scheme='http')
                 if url.netloc=='' and url.path != '':
@@ -36,14 +46,14 @@ def main(args):
             continue
 
         if i['prot'] == 'icmp':
-            print(f'ping       {str(addr):30}: ', end='', flush=True)
-            cp = subprocess.run(['ping','-c1','-w2',f'{addr}'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            print(f'ping       {addr:30}: ', end='', flush=True)
+            cp = subprocess.run(['ping','-c1','-w2',addr],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             print(f'{FAIL if cp.returncode else PASS}')
             retcode = retcode + cp.returncode
         elif i['prot'] == "tcp":
-            print(f'tcp/{i["tcpport"]:<6} {str(addr):30}: ', end='', flush=True)
+            print(f'tcp/{i["tcpport"]:<6} {addr:30}: ', end='', flush=True)
             s = None
-            for res in socket.getaddrinfo(str(addr), i['tcpport'], socket.AF_UNSPEC, socket.SOCK_STREAM):
+            for res in socket.getaddrinfo(addr, i['tcpport'], socket.AF_UNSPEC, socket.SOCK_STREAM):
                 af, socktype, proto, canonname, sa = res
                 try:
                     s = socket.socket(af, socktype, proto)
@@ -71,6 +81,21 @@ def main(args):
             r = requests.get(url.geturl(), verify=SSLVerify)
             print(f'{PASS if re.search(i["httpstring"],r.text) else FAIL}')
             retcode = retcode + (0 if re.search(i["httpstring"],r.text) else 1)
+        elif i['prot'] == 'icap':
+            print(f'icap       {addr:30}: ', end='', flush=True)
+            suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            cp = subprocess.run(['c-icap-client','-i',addr,'-s',i["icapservice"],'-f',i["icaptestfile"],'-o',i["icaptestfile"]+suffix],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            if cp.returncode == 0:
+                if os.path.isfile(i['icaptestfile']+suffix):
+                    c2 = checksum(i['icaptestfile']+suffix,hashlib.md5())
+                    os.remove(i['icaptestfile']+suffix)
+                    if checksum(i['icaptestfile'],hashlib.md5()) != c2:
+                        print(PASS)
+                        continue
+
+            print(FAIL)
+            retcode += 1
+            continue
 
     return retcode
 
