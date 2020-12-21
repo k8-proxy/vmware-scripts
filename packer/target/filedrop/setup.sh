@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo apt update && sudo apt upgrade -y
 bash <( curl -sfL https://get.k3s.io )
 bash <( curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 )
 mkdir ~/.kube && sudo install -T /etc/rancher/k3s/k3s.yaml ~/.kube/config -m 600 -o $USER
