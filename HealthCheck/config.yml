@@ -1,3 +1,4 @@
+
 hosts:
   - address: 8.8.8.8
     prot: "icmp"
@@ -21,3 +22,7 @@ hosts:
   - address: google.com
     prot: tcp
     tcpport: 80
+  - address: localhost
+    prot: icap
+    icaptestfile: a.pdf
+    icapservice: gw_rebuild

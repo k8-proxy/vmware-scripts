@@ -7,6 +7,7 @@ This script can be used to check Health of automaticly created solutions in pipe
 * TCP port check
 * http/https code status check (eg. 200)
 * http/https return string check
+* ICAP check if returned file is modified
 
 ### Install
 ```bash
