@@ -16,8 +16,8 @@ context('Files', () => {
 	cy.get('button[type=submit]').click()
 	const uploadfile = 'a.pdf';
 	cy.get('input[type=file]').attachFile(uploadfile)
-	cy.get('button[data-test-id=buttonFileDropDownloadXml]:not(hidden)').click({force: true})
-	cy.get('button[data-test-id=buttonFileDropDownloadPdf]:not(hidden)').click({force: true})
+	//cy.get('button[data-test-id=buttonFileDropDownloadXml]:not(hidden)').click({force: true})
+	//cy.get('button[data-test-id=buttonFileDropDownloadPdf]:not(hidden)').click({force: true})
   })
 
 })
