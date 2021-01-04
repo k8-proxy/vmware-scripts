@@ -1,92 +1,83 @@
 {
-    "variables": {},
     "builders": [
-        {
-            "type": "vmware-iso",
-            "guest_os_type": "ubuntu-64",
-            "vm_name": "{{ user `vm_name` }}",
-            "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.1-live-server-amd64.iso",
-            "iso_checksum":"file:https://releases.ubuntu.com/focal/SHA256SUMS",
-            "memory": "{{ user `memory` }}",
-            "cpus": "{{ user `cpu` }}",
-            "disk_size": "50000",
-            "format": "ova",
-            "headless": "false",
-            "http_directory": "http",
-            "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
-            "cd_label": "cidata",
-            "ssh_host":"{{ user `ssh_host` }}",
-            "ssh_username": "{{user `ssh_user`}}",
-            "ssh_password": "Gl@$$wall",
-            "ssh_timeout": "15m",
-            "pause_before_connecting": "10s",
-            "vnc_over_websocket": true,
-            "insecure_connection": true,
-            "shutdown_command": "sudo poweroff",
-            "boot_wait": "4s",
-            "boot_command": [
-                    "<enter><enter><f6><esc><wait>",
-                    "autoinstall ds=nocloud-net",
-                    "<enter><wait>"
-            ],
-            "remote_type": "esx5",
-            "remote_host": "{{user `esxi_host`}}",
-            "remote_datastore": "{{user `esxi_datastore`}}",
-            "remote_username":  "{{user `esxi_username`}}",
-            "remote_password":  "{{user `esxi_password`}}",
-            "keep_registered":  true,
-            "skip_validate_credentials":true,
-
-            "vmx_data": {
-                    "ethernet0.networkName": "{{user `vswitch`}}",
-                    "ethernet0.present": "TRUE",
-                    "ethernet0.startConnected": "TRUE",
-                    "ethernet0.virtualDev": "e1000",
-                    "ethernet0.addressType": "generated",
-                    "ethernet0.generatedAddressOffset": "0",
-                    "ethernet0.wakeOnPcktRcv": "FALSE",
-                    "virtualHW.version":"13",
-                    "virtualhw.productcompatibility":"esx"
+      {
+        "boot_command": [
+            "<enter><enter><f6><esc><wait>",
+            "autoinstall ds=nocloud-net",
+            "<enter>"
+        ],
+        "boot_wait": "4s",
+        "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
+        "cd_label": "cidata",        
+        "cpus": "{{ user `cpu` }}",
+        "guest_os_type": "ubuntu64Guest",
+        "http_directory": "http",
+        "insecure_connection": "true",
+        "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.1-live-server-amd64.iso",
+        "iso_checksum":"file:https://releases.ubuntu.com/focal/SHA256SUMS",
+        "password": "{{user `esxi_password`}}",
+        "pause_before_connecting": "10s",
+        "shutdown_command": "sudo poweroff",
+        "ssh_host": "{{ user `ssh_host` }}",
+        "ssh_password": "Gl@$$wall",
+        "ssh_timeout": "15m",
+        "ssh_username": "{{user `ssh_user`}}",
+        "storage": [
+          {
+            "disk_size": "50000"
+          }
+        ],
+        "type": "vsphere-iso",
+        "username": "{{user `esxi_username`}}",
+        "vcenter_server": "pcc-145-239-249-136.ovh.uk",
+        "datacenter": "pcc-145-239-249-136_datacenter869",
+        "cluster": "Cluster1",
+        "datastore": "ssd-000844",
+        "network_adapters": [
+            {
+              "network": "VM Network"
             }
-        }
+          ],
+        "vm_name": "{{ user `vm_name` }}",
+        "vm_version": "15"
+      }
     ],
-    "provisioners": [{
-        "type": "shell",
+    "provisioners": [
+      {
         "inline": [
-            "sudo apt update",
-            "sudo apt upgrade -y"
-            ]
-    },
-    {
-        "type": "shell",
+          "sudo apt update",
+          "sudo apt upgrade -y"
+        ],
+        "type": "shell"
+      },
+      {
+        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}",
         "script": "scripts/network/network.sh",
-        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
-    },
-    {
-        "type": "shell",
+        "type": "shell"
+      },
+      {
+        "execute_command": "chmod +x {{.Path}}; {{.Path}}",
         "script": "scripts/config/init-config.sh",
-        "execute_command": "chmod +x {{.Path}}; {{.Path}}"
-    },
-
-    {
-        "type": "file",
-        "source":"./setup",
-        "destination":"/tmp/"
-    },
-    {
-        "type": "shell",
+        "type": "shell"
+      },
+      {
+        "destination": "/tmp/",
+        "source": "./setup",
+        "type": "file"
+      },
+      {
         "inline": [
-            "chmod +x /tmp/setup/setup.sh",
-            "cd /tmp/setup",
-            "./setup.sh"
-        ]
-    },
-
-    {
-        "type": "shell",
+          "chmod +x /tmp/setup/setup.sh",
+          "cd /tmp/setup",
+          "./setup.sh"
+        ],
+        "type": "shell"
+      },
+      {
+        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}",
         "script": "scripts/cleanup/cleanup.sh",
-        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
-    }
-    ]
-
-}
+        "type": "shell"
+      }
+    ],
+    "variables": {}
+  }
