@@ -30,7 +30,7 @@ def main(args):
     SSLVerify = False
     logging.captureWarnings(True)
 
-    with open('config.yml') as file:
+    with open('/opt/healthcheck/config.yml') as file:
         config = yaml.load(file, Loader=yaml.Loader)
     
     for i in config['hosts']:
