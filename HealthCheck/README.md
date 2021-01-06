@@ -11,6 +11,10 @@ This script can be used to check Health of automaticly created solutions in pipe
 
 ### Install
 ```bash
+sudo su -
+cd /opt
+mkdir healthcheck
+healthcheck/
 sh <(curl -s https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh || wget -q -O - https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh)
 ```
 ### Usage
@@ -25,5 +29,5 @@ echo $?
 ```
 ### This will add Health Check script to the cron and it will run every minute and put data to syslog:
 ```bash
-echo '* * * * * root /path/to/pyMonitor.py | logger' > /etc/cron.d/pyMonitor
+echo '* * * * * root /opt/healthcheck/pyCheck.py | logger' > /etc/cron.d/pyMonitor
 ```
