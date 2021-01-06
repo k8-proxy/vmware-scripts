@@ -27,7 +27,7 @@ If you want to display how many checks fails or use it in pipelines use:
 ```bash
 echo $?
 ```
-### This will add Health Check script to the cron and it will run every minute and put data to syslog (not working yet):
+### This will add Health Check script to the cron and it will run every minute and put data to syslog:
 ```bash
 echo '* * * * * root /opt/healthcheck/pyCheck.py | logger' > /etc/cron.d/pyMonitor
 ```
