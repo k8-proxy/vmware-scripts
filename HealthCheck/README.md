@@ -14,7 +14,7 @@ This script can be used to check Health of automaticly created solutions in pipe
 sudo su -
 cd /opt
 mkdir healthcheck
-healthcheck/
+cd healthcheck/
 sh <(curl -s https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh || wget -q -O - https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheck/install.sh)
 ```
 ### Usage
