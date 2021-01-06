@@ -19,7 +19,11 @@ Edit config.yml with checks and run using:
 ```bash
 python3 pyCheck.py
 ```
-If you want to display how many checks fails use:
+If you want to display how many checks fails or use it in pipelines use:
 ```bash
 echo $?
 ```
+### This will add Health Check script to the cron and it will run every minute and put data to syslog:
+```bash
+echo '* * * * * root /path/to/pyMonitor.py | logger' > /etc/cron.d/pyMonitor
+```bash
