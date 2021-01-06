@@ -1,20 +1,23 @@
 {
     "builders": [
       {
-        "boot_command": [
-            "<enter><enter><f6><esc><wait>",
-            "autoinstall ds=nocloud-net",
-            "<enter>"
-        ],
-        "boot_wait": "4s",
         "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
-        "cd_label": "cidata",        
+        "cd_label": "cidata",
+        "cluster": "Cluster1",
         "cpus": "{{ user `cpu` }}",
+        "datacenter": "pcc-145-239-249-136_datacenter869",
+        "datastore": "ssd-000844",
         "guest_os_type": "ubuntu64Guest",
-        "http_directory": "http",
-        "insecure_connection": "true",
+        "http_directory": "cdrom",
+        "insecure_connection": true,
         "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.1-live-server-amd64.iso",
         "iso_checksum":"file:https://releases.ubuntu.com/focal/SHA256SUMS",
+        "network_adapters": [
+            {
+                "network": "VM Network",
+                "network_card": "vmxnet3"
+            }
+        ],
         "password": "{{user `esxi_password`}}",
         "pause_before_connecting": "10s",
         "shutdown_command": "sudo poweroff",
@@ -30,54 +33,51 @@
         "type": "vsphere-iso",
         "username": "{{user `esxi_username`}}",
         "vcenter_server": "pcc-145-239-249-136.ovh.uk",
-        "datacenter": "pcc-145-239-249-136_datacenter869",
-        "cluster": "Cluster1",
-        "datastore": "ssd-000844",
-        "network_adapters": [
-            {
-              "network": "VM Network"
-            }
-          ],
         "vm_name": "{{ user `vm_name` }}",
-        "vm_version": "15"
+        "vm_version": "13",
+
+        "configuration_parameters": {
+          "ethernet0.virtualDev": "vmxnet3"
+        }
       }
     ],
-    "provisioners": [
-      {
-        "inline": [
+    "provisioners": [{
+      "type": "shell",
+      "inline": [
           "sudo apt update",
           "sudo apt upgrade -y"
-        ],
-        "type": "shell"
-      },
-      {
-        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}",
-        "script": "scripts/network/network.sh",
-        "type": "shell"
-      },
-      {
-        "execute_command": "chmod +x {{.Path}}; {{.Path}}",
-        "script": "scripts/config/init-config.sh",
-        "type": "shell"
-      },
-      {
-        "destination": "/tmp/",
-        "source": "./setup",
-        "type": "file"
-      },
-      {
-        "inline": [
+          ]
+  },
+  {
+      "type": "shell",
+      "script": "scripts/network/network.sh",
+      "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+  },
+  {
+      "type": "shell",
+      "script": "scripts/config/init-config.sh",
+      "execute_command": "chmod +x {{.Path}}; {{.Path}}"
+  },
+
+  {
+      "type": "file",
+      "source":"./setup",
+      "destination":"/tmp/"
+  },
+  {
+      "type": "shell",
+      "inline": [
           "chmod +x /tmp/setup/setup.sh",
           "cd /tmp/setup",
           "./setup.sh"
-        ],
-        "type": "shell"
-      },
-      {
-        "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}",
-        "script": "scripts/cleanup/cleanup.sh",
-        "type": "shell"
-      }
-    ],
+      ]
+  },
+
+  {
+      "type": "shell",
+      "script": "scripts/cleanup/cleanup.sh",
+      "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}"
+  }
+  ],
     "variables": {}
   }
