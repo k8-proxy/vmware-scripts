@@ -7,7 +7,7 @@
 
 context('Files', () => {
   beforeEach(() => {
-    cy.visit('http://3.249.245.10/')
+    cy.visit('http://54.154.138.32')
   })
 
   it('login', () => {
