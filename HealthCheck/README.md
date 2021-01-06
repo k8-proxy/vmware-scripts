@@ -26,4 +26,4 @@ echo $?
 ### This will add Health Check script to the cron and it will run every minute and put data to syslog:
 ```bash
 echo '* * * * * root /path/to/pyMonitor.py | logger' > /etc/cron.d/pyMonitor
-```bash
+```
