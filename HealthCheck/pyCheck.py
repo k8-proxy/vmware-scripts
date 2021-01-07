@@ -31,7 +31,7 @@ def main(args):
     SSLVerify = False
     logging.captureWarnings(True)
 #SonHa : Start fix hardcode path
-    with open('pathlib.Path(pathlib.Path(__file__).parent.absolute(), 'config.yml')') as file:
+    with open(pathlib.Path(pathlib.Path(__file__).parent.absolute(), 'config.yml')) as file:
 #SonHa: End fix hardcode path
         config = yaml.load(file, Loader=yaml.Loader)
     
