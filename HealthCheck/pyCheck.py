@@ -14,6 +14,7 @@ import string
 import hashlib
 import os
 import time
+import pathlib
 
 def checksum(filename, hashfunc):
     with open(filename,"rb") as f:
@@ -29,8 +30,9 @@ def main(args):
 
     SSLVerify = False
     logging.captureWarnings(True)
-
-    with open('/opt/healthcheck/config.yml') as file:
+#SonHa : Start fix hardcode path
+    with open(pathlib.Path(pathlib.Path(__file__).parent.absolute(), 'config.yml')) as file:
+#SonHa: End fix hardcode path
         config = yaml.load(file, Loader=yaml.Loader)
     
     for i in config['hosts']:
