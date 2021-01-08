@@ -28,11 +28,11 @@ sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
 # build images
 pushd stable-src
-docker build nginx -t localhost:30500/reverse-proxy-nginx:0.0.1
-docker push localhost:30500/reverse-proxy-nginx:0.0.1
+sudo docker build nginx -t localhost:30500/reverse-proxy-nginx:0.0.1
+sudo docker push localhost:30500/reverse-proxy-nginx:0.0.1
 
-docker build squid -t localhost:30500/reverse-proxy-squid:0.0.1
-docker push localhost:30500/reverse-proxy-squid:0.0.1
+sudo docker build squid -t localhost:30500/reverse-proxy-squid:0.0.1
+sudo docker push localhost:30500/reverse-proxy-squid:0.0.1
 
 sed -i.orig 's/<docker registry>/localhost:30500/g' chart/values.yaml
 
