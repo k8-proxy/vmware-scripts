@@ -1,0 +1,19 @@
+# Installing file2ban with default configuration
+# Append the following to the end of your packer image setup.sh 
+
+sudo apt-get update
+sudo apt-get install fail2ban -y
+sudo systemctl enable fail2ban.service
+
+sudo tee -a /etc/fail2ban/jail.d/sshd.conf << EOF > /dev/null
+[sshd]
+enabled = true
+port = ssh
+action = iptables-multiport
+logpath = /var/log/auth.log
+bantime  = 10h
+findtime = 10m
+maxretry = 5
+EOF
+
+sudo systemctl restart fail2ban
