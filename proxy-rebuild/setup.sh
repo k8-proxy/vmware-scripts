@@ -35,12 +35,10 @@ echo "Done installing helm"
 # clone repos
 cd ~
 git clone https://github.com/k8-proxy/s-k8-proxy-rebuild.git
-cd s-k8-proxy-rebuild && git fetch && git checkout remove_quickstart && cd ../ # TODO: remove this
 git clone https://github.com/k8-proxy/vmware-scripts.git
 
 # generate self signed certificates
 cd vmware-scripts/proxy-rebuild
-git checkout proxy-rebuild  # TODO: remove this
 chmod +x gencert.sh
 ./gencert.sh
 echo "Generated certificates"
