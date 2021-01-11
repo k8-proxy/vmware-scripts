@@ -14,6 +14,26 @@ import os
 import time
 import pathlib
 from datetime import datetime
+import netifaces as ni
+
+def get_default_gateway():
+    """
+    Attempts to read /proc/self/net/route to determine the default gateway in>
+    :return: String - the network interface of the default gateway or None if not fo>
+    """
+    try:
+        hip = None
+        # The first line is the header line
+        # We look for the line where the Destination is 00000000 - that is th>
+        # The Gateway interface is encoded front of.
+        with open("/proc/self/net/route") as routes:
+            for line in routes:
+                parts = line.split('\t')
+                if '00000000' == parts[1]:
+                    hip = parts[0]
+        return hip
+    except Exception:
+        logger.warning("get_default_gateway: ", exc_info=True)
 
 def checksum(filename, hashfunc):
     with open(filename, "rb") as f:
@@ -25,10 +45,11 @@ def checksum(filename, hashfunc):
 def main(args):
     retcode = 0
 # Get public ip address of host
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ipaddr =s.getsockname()[0]
-    s.close()
+    iface = get_default_gateway()
+    ni.ifaddresses(iface)
+    ipaddr = ni.ifaddresses(iface)[ni.AF_INET][0]['addr'] # use IP address in log result , incase use hostname, please uncomment-line ipaddr = socket.gethostname() below
+#Get Hostname
+#    ipaddr = socket.gethostname()
 
     FAIL = "FAIL"
     PASS = "PASS"
