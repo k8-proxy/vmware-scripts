@@ -56,3 +56,8 @@ kubectl create -n management-ui secret generic transactionqueryserviceref --from
 
 cd ../administration
 helm upgrade administration --install . --namespace management-ui
+
+# create a user
+sudo useradd -p $(openssl passwd -1 glasswall) glasswall
+sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+sudo service sshd restart
