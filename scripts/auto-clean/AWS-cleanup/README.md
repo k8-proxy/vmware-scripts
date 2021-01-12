@@ -5,17 +5,15 @@ The Following steps will show how to remove one or multi ec2 instances using **r
 * First, you need ansible to be installed on your machine
 
 ```bash
-sudo apt install software-properties-common -y
-sudo apt-add-repository ppa:ansible/ansible
-sudo apt update
-sudo apt install ansible -y
-```
-
-* Then install boto & boto3 which is Amazon Web Services (AWS) SDK for Python
-
-```bash
+echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc
 sudo apt install python3
 sudo apt install python3-pip -y
+pip3 install --user ansible
+```
+
+* Close your terminal and reopen it again, Then install boto & boto3 which is Amazon Web Services (AWS) SDK for Python
+
+```bash
 sudo pip3 install boto boto3
 ```
 
