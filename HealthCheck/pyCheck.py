@@ -190,12 +190,15 @@ def main(args):
             if cp.returncode == 0:
                 if os.path.isfile(i['icaptestfile']+suffix):
                     c2 = checksum(i['icaptestfile']+suffix,hashlib.md5())
-                    os.remove(i['icaptestfile']+suffix)
                     if checksum(i['icaptestfile'],hashlib.md5()) != c2:
                         if istty: print(PASS_TIME)
                         else: log(msg_format + PASS_TIME)
                         continue
 
+            try:
+                os.remove(i['icaptestfile']+suffix)
+            except FileNotFoundError:
+                pass
             if istty: print(FAIL)
             else: log(msg_format + FAIL)
             retcode += 1
@@ -205,4 +208,3 @@ def main(args):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
-
