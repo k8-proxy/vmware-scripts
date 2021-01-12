@@ -1,6 +1,10 @@
 {
     "builders": [
       {
+        "boot_wait": "4s",
+        "boot_command": [
+                "<enter><enter><f6><esc><wait>"
+        ],
         "cd_files": ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
         "cd_label": "cidata",
         "cluster": "Cluster1",
@@ -34,7 +38,7 @@
         "username": "{{user `esxi_username`}}",
         "vcenter_server": "pcc-145-239-249-136.ovh.uk",
         "vm_name": "{{ user `vm_name` }}",
-        "vm_version": "13",
+        "vm_version": "15",
 
         "configuration_parameters": {
           "ethernet0.virtualDev": "vmxnet3"
