@@ -16,5 +16,5 @@
           wait: true
           state: 'absent'
         loop: "{{result.instances}}"
-        when: item.tags."{{delete_tag}}" is defined
+        when: item.tags.{{delete_tag}} is defined
 
