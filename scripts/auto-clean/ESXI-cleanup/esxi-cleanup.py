@@ -38,8 +38,8 @@ for vm_o in vms_o:
 
     if (rm_note and rm_note.lower() in notes.lower()) or (create_date < (now - timedelta(days=expire_days_no)) and (not dont_rm_note or dont_rm_note.lower() not in notes.lower())):
     	if state == 'poweredOn':
-    		# vm.task().power_off()
-    	# vm.task().delete()
+    		vm.task().power_off()
+    	vm.task().delete()
     	removed_VMs.append(info["Name"])
 
 if removed_VMs:
