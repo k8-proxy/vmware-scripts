@@ -5,10 +5,10 @@ config:
   logfile: log
 
 hosts:
-  - address: 8.8.8.8
-    prot: "icmp"
-  - address: google.com
-    prot: icmp
+  - prot: "icmp"
+    address: 8.8.8.8
+  - prot: icmp
+    address: google.com
   - address: google.com
     prot: httpstatus
     httpstatus: 200
