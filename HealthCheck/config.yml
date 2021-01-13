@@ -1,3 +1,8 @@
+config:
+  log: console
+  #log: syslog
+  #log: file
+  logfile: log
 
 hosts:
   - address: 8.8.8.8
@@ -7,22 +12,10 @@ hosts:
   - address: google.com
     prot: httpstatus
     httpstatus: 200
-  - prot: icmp
-  - address: google.com
+  - address: 52.215.222.98
     prot: httpstring
-    httpstring: google
-  - address: 192.0.2.253
-    prot: icmp
-  - address: 8.8.8.8
-    prot: tcp
-    tcpport: 53
-  - address: 8.8.8.8
-    prot: tcp
-    tcpport: 80
-  - address: google.com
-    prot: tcp
-    tcpport: 80
-  - address: localhost
+    httpstring: Glasswall
+  - address: 54.77.168.168
     prot: icap
     icaptestfile: a.pdf
-    icapservice: gw_rebuild
+    icaptimeout: 10
