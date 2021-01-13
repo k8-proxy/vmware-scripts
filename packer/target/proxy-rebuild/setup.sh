@@ -39,6 +39,11 @@ curl https://get.docker.com | bash
 #EOF
 
 git clone https://github.com/k8-proxy/k8-reverse-proxy.git --recursive --single-branch --depth 1 && pushd k8-reverse-proxy/stable-src && git submodule foreach git pull origin main
+
+sudo rm -f /usr/local/bin/kubectl
+sudo curl  -Lo /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo chmod 755 /usr/local/bin/kubectl
+
 # install local docker registry
 sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
