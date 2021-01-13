@@ -84,3 +84,10 @@ helm upgrade --install \
 --set ingress.tls.key=$key \
 reverse-proxy ~/s-k8-proxy-rebuild/stable-src/chart/
 rm -rf ~/s-k8-proxy-rebuild
+
+# deploy monitoring solution
+git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
+helm install sow-monitoring monitoring
+
+# give sometime for the pods to be up
+sleep 120s
