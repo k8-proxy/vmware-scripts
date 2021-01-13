@@ -1,6 +1,6 @@
 {
     "variables": {
-      "icap_server_ip": null,
+      "icap_server_ip": "",
       "security_group_ids": "sg-0120400d5eefb0b9e"
     },
     "builders": [
