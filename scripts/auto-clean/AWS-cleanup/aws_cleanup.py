@@ -45,7 +45,11 @@ class DeleteAwsEc2:
         delete_value = os.environ.get("delete_value",None)
         dont_delete_tag = os.environ.get("dont_delete_tag",None)
         dont_delete_value = os.environ.get("dont_delete_value",None)
-        expire_days_no= int(os.environ.get("expire_days_no",None))
+        expire_days_no= os.environ.get("expire_days_no",None)
+        if not expire_days_no:
+            expire_days_no=9999
+        else:
+            expire_days_no=int(expire_days_no)
 
         delete_instance_list = []
 
