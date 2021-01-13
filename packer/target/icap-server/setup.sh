@@ -47,6 +47,11 @@ kubectl create secret tls icap-service-tls-config --namespace icap-adaptation --
 kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 
 kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
+kubectl create -n icap-adaptation secret docker-registry regcred \
+	--docker-server=https://index.docker.io/v1/ \
+	--docker-username=$docker_username \
+	--docker-password=$docker_password \
+	--docker-email=$docker_email
 
 cd ../adaptation
 helm upgrade adaptation --install . --namespace icap-adaptation
@@ -57,16 +62,9 @@ kubectl create -n management-ui secret generic transactionqueryserviceref --from
 cd ../administration
 helm upgrade administration --install . --namespace management-ui
 
-# create a user
-sudo useradd -p $(openssl passwd -1 glasswall) glasswall
-sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-sudo service sshd restart
-
-echo -e -n "glasswall\nglasswall" | sudo passwd ubuntu
-
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
 helm install sow-monitoring monitoring
 
 # wait until the pods are up
-sleep 120s
+# sleep 120s
