@@ -7,7 +7,7 @@
 
 context('Files', () => {
   beforeEach(() => {
-    cy.visit('http://3.249.245.10/')
+    cy.visit('http://54.154.138.32')
   })
 
   it('login', () => {
@@ -16,8 +16,8 @@ context('Files', () => {
 	//cy.get('button[type=submit]').click()
 	const uploadfile = 'a.pdf';
 	cy.get('input[type=file]').attachFile(uploadfile)
-	cy.get('button[data-test-id=buttonFileDropDownloadXml]:not(hidden)').should('be.hidden')
-	cy.get('button[data-test-id=buttonFileDropDownloadPdf]:not(hidden)').should('be.hidden')
+	cy.get('button[data-test-id=buttonFileDropDownloadXml]:not(hidden)').should('have.value','')
+	cy.get('button[data-test-id=buttonFileDropDownloadPdf]:not(hidden)').should('have.value','')
   })
 
 })

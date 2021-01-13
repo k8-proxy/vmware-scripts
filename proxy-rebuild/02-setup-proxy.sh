@@ -36,7 +36,7 @@ helm upgrade --install \
 --set hostAliases.\""$GOVUK_IP"\"={"www.gov.uk"\,"gov.uk"\,"assets.publishing.service.gov.uk"} \
 --set ingress.tls.crt=$crt \
 --set ingress.tls.key=$key \
-reverse-proxy /home/glasswall/s-k8-proxy-rebuild/stable-src/chart/
+reverse-proxy ~/s-k8-proxy-rebuild/stable-src/chart/
 
 echo ""
 echo "Add below line to your system's host file and browse the websites in the firefox"

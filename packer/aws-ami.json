@@ -1,5 +1,8 @@
 {
-    "variables": {},
+    "variables": {
+      "icap_server_ip": null,
+      "security_group_ids": "sg-0120400d5eefb0b9e"
+    },
     "builders": [
       {
         "access_key": "{{user `aws_access_key`}}",
@@ -11,6 +14,7 @@
         "ssh_timeout": "20m",
         "type": "amazon-ebs",
         "ami_regions": ["{{user `region`}}"],
+        "security_group_ids": "{{user `security_group_ids`}}",
         "source_ami_filter": {
             "filters": {
             "virtualization-type": "hvm",
@@ -22,7 +26,8 @@
          },
         "tags": {
             "OS_Version": "Ubuntu-20.04",
-            "Base_AMI_Name": "{{ .SourceAMIName }}"
+            "Base_AMI_Name": "{{ .SourceAMIName }}",
+            "Name": "{{user `vm_name`}}"
         },
         "run_tags": {
             "Name": "Packer Builder {{user `vm_name`}}",
@@ -41,7 +46,7 @@
       "provisioners": [
         {
             "type": "shell",
-            "script": "./scripts/config/init-config-aws.sh"
+            "script": "./scripts/config/init-config.sh"
         },
         {
             "type": "file",
@@ -54,7 +59,8 @@
                 "chmod +x /tmp/setup/setup.sh",
                 "cd /tmp/setup",
                 "./setup.sh"
-            ]
+            ],
+            "environment_vars": "ICAP_SERVER_IP={{user `icap_server_ip`}}"
         },
         {
             "type": "shell",
