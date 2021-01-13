@@ -61,3 +61,5 @@ helm upgrade administration --install . --namespace management-ui
 sudo useradd -p $(openssl passwd -1 glasswall) glasswall
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 sudo service sshd restart
+
+echo -e -n "glasswall\nglasswall" | sudo passwd ubuntu
