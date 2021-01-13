@@ -18,4 +18,5 @@ hosts:
   - address: 54.77.168.168
     prot: icap
     icaptestfile: a.pdf
-    icaptimeout: 10
+    icaptimeout: 20
+    icapservice: gw_rebuild
