@@ -1,5 +1,8 @@
 #!/bin/bash
 pushd $( dirname $0 )
+if [ -f ./env ] ; then
+source ./env
+fi
 
 sudo mkdir -p /var/lib/rancher/k3s/server/manifests/
 sudo touch /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
