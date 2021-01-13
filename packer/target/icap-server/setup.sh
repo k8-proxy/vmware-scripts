@@ -63,3 +63,10 @@ sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh
 sudo service sshd restart
 
 echo -e -n "glasswall\nglasswall" | sudo passwd ubuntu
+
+# deploy monitoring solution
+git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
+helm install sow-monitoring monitoring
+
+# wait until the pods are up
+sleep 120s
