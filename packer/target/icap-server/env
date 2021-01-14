@@ -1,0 +1,7 @@
+# This is a demonstration environment variable, the following commented lines are required to build ICAP server
+# You can uncomment and change the value as desired for the build
+
+#DOCKER_USERNAME=***
+#DOCKER_PASSWORD=***
+#DOCKER_EMAIL=***
+#MONITORING_IP=91.109.26.22
