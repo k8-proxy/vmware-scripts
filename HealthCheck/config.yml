@@ -12,11 +12,11 @@ hosts:
   - address: google.com
     prot: httpstatus
     httpstatus: 200
-  - address: 52.215.222.98
-    prot: httpstring
+  - prot: httpstring
+    address: 52.215.222.98
     httpstring: Glasswall
-  - address: 54.77.168.168
-    prot: icap
+  - prot: icap
+    address: 54.77.168.168
     icaptestfile: a.pdf
     icaptimeout: 90
     icapservice: gw_rebuild
