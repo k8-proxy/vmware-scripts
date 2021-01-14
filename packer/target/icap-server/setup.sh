@@ -64,7 +64,7 @@ helm upgrade administration --install . --namespace management-ui
 
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
-helm install sow-monitoring monitoring
+helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$monitoring_ip
 
 # wait until the pods are up
 # sleep 120s

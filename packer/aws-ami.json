@@ -59,7 +59,7 @@
                 "cd /tmp/setup",
                 "./setup.sh"
             ],
-            "environment_vars": ["ICAP_SERVER_IP={{user `icap_server_ip`}}", "docker_username={{user `docker_username`}}", "docker_password={{user `docker_password`}}", "docker_email={{user `docker_email`}}"]
+            "environment_vars": ["ICAP_SERVER_IP={{user `icap_server_ip`}}", "docker_username={{user `docker_username`}}", "docker_password={{user `docker_password`}}", "docker_email={{user `docker_email`}}", "monitoring_ip={{user `monitoring_ip`}}"]
         },
         {
             "type": "shell",
