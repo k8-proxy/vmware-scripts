@@ -57,7 +57,7 @@ sudo docker push localhost:30500/reverse-proxy-squid
 
 popd
 
-git clone https://github.com/k8-proxy/s-k8-proxy-rebuild.git ~/s-k8-proxy-rebuild --recursive --single-branch --depth 1 && pushd s-k8-proxy-rebuild/stable-src && git submodule foreach git pull origin main && popd
+git clone https://github.com/k8-proxy/s-k8-proxy-rebuild.git ~/s-k8-proxy-rebuild --recursive --single-branch --depth 1 && pushd ~/s-k8-proxy-rebuild/ && git submodule foreach git pull origin main && popd
 git clone https://github.com/k8-proxy/vmware-scripts.git --recursive --single-branch --depth 1 && pushd vmware-scripts/proxy-rebuild && git submodule foreach git pull origin main
 bash gencert.sh
 cp ca.pem ~/ca.pem
