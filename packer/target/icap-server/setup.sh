@@ -14,7 +14,7 @@ curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
 echo "Done installing helm"
 
 # get source code
-git clone https://github.com/k8-proxy/icap-infrastructure.git -b upstream-refresh-11-janv
+git clone https://github.com/k8-proxy/icap-infrastructure.git
 cd icap-infrastructure
 
 # Create namespaces
