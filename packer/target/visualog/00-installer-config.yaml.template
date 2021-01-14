@@ -1,0 +1,11 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens160:
+      addresses:
+      - IP_ADDRESS/NETMASK
+      gateway4: GATEWAY
+      nameservers:
+        addresses:
+        - DNS_SERVER
