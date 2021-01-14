@@ -1,6 +1,5 @@
 {
     "variables": {
-      "icap_server_ip": null,
       "security_group_ids": "sg-0120400d5eefb0b9e"
     },
     "builders": [
@@ -59,8 +58,7 @@
                 "chmod +x /tmp/setup/setup.sh",
                 "cd /tmp/setup",
                 "./setup.sh"
-            ],
-            "environment_vars": "ICAP_SERVER_IP={{user `icap_server_ip`}}"
+            ]
         },
         {
             "type": "shell",
