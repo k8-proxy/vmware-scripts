@@ -5,10 +5,10 @@ config:
   logfile: log
 
 hosts:
-  - address: 8.8.8.8
-    prot: "icmp"
-  - address: google.com
-    prot: icmp
+  - prot: "icmp"
+    address: 8.8.8.8
+  - prot: icmp
+    address: google.com
   - address: google.com
     prot: httpstatus
     httpstatus: 200
@@ -18,4 +18,5 @@ hosts:
   - address: 54.77.168.168
     prot: icap
     icaptestfile: a.pdf
-    icaptimeout: 10
+    icaptimeout: 90
+    icapservice: gw_rebuild

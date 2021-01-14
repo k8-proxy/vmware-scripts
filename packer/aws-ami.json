@@ -1,6 +1,5 @@
 {
     "variables": {
-      "icap_server_ip": null,
       "security_group_ids": "sg-0120400d5eefb0b9e"
     },
     "builders": [
@@ -13,7 +12,7 @@
         "ssh_username": "ubuntu",
         "ssh_timeout": "20m",
         "type": "amazon-ebs",
-        "ami_regions": ["{{user `region`}}"],
+        "ami_regions": "{{user `extra_regions`}}",
         "security_group_ids": "{{user `security_group_ids`}}",
         "source_ami_filter": {
             "filters": {
@@ -60,7 +59,7 @@
                 "cd /tmp/setup",
                 "./setup.sh"
             ],
-            "environment_vars": "ICAP_SERVER_IP={{user `icap_server_ip`}}"
+            "environment_vars": ["ICAP_SERVER_IP={{user `icap_server_ip`}}", "docker_username={{user `docker_username`}}", "docker_password={{user `docker_password`}}", "docker_email={{user `docker_email`}}"]
         },
         {
             "type": "shell",
