@@ -8,6 +8,6 @@ curl --user httpuser:httppass \
 ```
 curl -X POST --user httpuser:httppass \
 -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
-'http://91.109.26.22:8881/api/kibana/dashboards/import?exclude=index-pattern' \
+'http://91.109.26.22:8881/api/kibana/dashboards/import' \
 -d @healthcheck.json
 ```
