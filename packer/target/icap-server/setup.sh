@@ -19,7 +19,7 @@ echo "Done installing helm"
 
 # get source code
 git clone https://github.com/k8-proxy/icap-infrastructure.git
-cd icap-infrastructure
+cd icap-infrastructure && git checkout upstream-refresh-11-janv
 
 # Create namespaces
 kubectl create ns icap-adaptation
