@@ -9,3 +9,9 @@ sudo cp docker-compose.yml /etc/logtrixia/.
 sudo cp -R nginx-config /etc/logtrixia/.
 sudo cp logtrixia.service /etc/systemd/system/logtrixia.service
 sudo systemctl enable logtrixia
+sudo systemctl start logtrixia
+sleep 480
+curl -X POST --user httpuser:httppass \
+-H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
+'http://localhost:8881/api/kibana/dashboards/import' \
+-d @dashboard/healthcheck.json
