@@ -92,4 +92,4 @@ rm -rf ~/s-k8-proxy-rebuild
 
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
-helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$monitoring_ip
+helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP

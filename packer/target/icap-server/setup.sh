@@ -1,4 +1,8 @@
 #!/bin/bash
+pushd $( dirname $0 )
+if [ -f ./env ] ; then
+source ./env
+fi
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
@@ -15,7 +19,7 @@ echo "Done installing helm"
 
 # get source code
 git clone https://github.com/k8-proxy/icap-infrastructure.git
-cd icap-infrastructure
+cd icap-infrastructure && git checkout upstream-refresh-11-janv
 
 # Create namespaces
 kubectl create ns icap-adaptation
@@ -49,9 +53,9 @@ kubectl create -n icap-adaptation secret generic policyupdateservicesecret --fro
 kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
-	--docker-username=$docker_username \
-	--docker-password=$docker_password \
-	--docker-email=$docker_email
+	--docker-username=$DOCKER_USERNAME \
+	--docker-password=$DOCKER_PASSWORD \
+	--docker-email=$DOCKER_EMAIL
 
 cd ../adaptation
 helm upgrade adaptation --install . --namespace icap-adaptation
@@ -64,7 +68,7 @@ helm upgrade administration --install . --namespace management-ui
 
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
-helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$monitoring_ip
+helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP
 
 # wait until the pods are up
 # sleep 120s
