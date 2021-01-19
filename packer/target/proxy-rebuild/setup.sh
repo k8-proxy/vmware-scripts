@@ -38,6 +38,7 @@ curl https://get.docker.com | bash
 #}
 #EOF
 
+git clone https://github.com/k8-proxy/k8-rebuild.git --single-branch --depth 1
 git clone https://github.com/k8-proxy/k8-reverse-proxy.git --recursive --single-branch --depth 1 && pushd k8-reverse-proxy/stable-src && git submodule foreach git pull origin main
 
 sudo rm -f /usr/local/bin/kubectl
@@ -91,5 +92,5 @@ reverse-proxy ~/s-k8-proxy-rebuild/stable-src/chart/
 rm -rf ~/s-k8-proxy-rebuild
 
 # deploy monitoring solution
-git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
+cd ~/k8-rebuild
 helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP
