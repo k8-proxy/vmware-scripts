@@ -37,7 +37,7 @@ curl https://get.docker.com | bash
 #  "registry-mirrors": ["http://localhost:30500"]
 #}
 #EOF
-
+cd ~
 git clone https://github.com/k8-proxy/k8-rebuild.git --single-branch --depth 1
 git clone https://github.com/k8-proxy/k8-reverse-proxy.git --recursive --single-branch --depth 1 && pushd k8-reverse-proxy/stable-src && git submodule foreach git pull origin main
 
