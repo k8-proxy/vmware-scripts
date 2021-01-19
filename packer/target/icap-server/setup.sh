@@ -19,11 +19,12 @@ echo "Done installing helm"
 
 # get source code
 git clone https://github.com/k8-proxy/icap-infrastructure.git
-cd icap-infrastructure && git checkout upstream-refresh-11-janv
+cd icap-infrastructure
 
 # Create namespaces
 kubectl create ns icap-adaptation
 kubectl create ns management-ui
+kubectl create ns icap-ncfs
 
 # Setup rabbitMQ
 cd rabbitmq
@@ -48,20 +49,20 @@ EOF
 openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x509 -days 365 -out /tmp/certificate.crt
 kubectl create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
 
-kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
-
-kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
-kubectl create -n icap-adaptation secret docker-registry regcred \
-	--docker-server=https://index.docker.io/v1/ \
-	--docker-username=$DOCKER_USERNAME \
-	--docker-password=$DOCKER_PASSWORD \
-	--docker-email=$DOCKER_EMAIL
-
 cd ../adaptation
+kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
+kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 helm upgrade adaptation --install . --namespace icap-adaptation
+
+# Setup icap policy management
+cd ../ncfs
+kubectl create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
+helm upgrade ncfs --install . --namespace icap-ncfs
 
 # setup management ui
 kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
+kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
+kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 
 cd ../administration
 helm upgrade administration --install . --namespace management-ui
