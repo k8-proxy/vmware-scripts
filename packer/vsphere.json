@@ -1,0 +1,72 @@
+{
+  "builders": [
+    {
+      "type":                 "vsphere-clone",
+
+      "vcenter_server":       "{{ user `vcenter_server` }}",
+      "username":             "{{ user `vcenter_username` }}",
+      "password":             "{{ user `vcenter_password` }}",
+      "host":                 "{{ user `vcenter_host` }}",
+      "insecure_connection":  "true",
+
+      "vm_name":              "{{ user `vm_name` }}",
+      "datastore":            "{{ user `vcenter_datastore` }}",
+      "folder":               "{{ user `taget_template_dir` }}",
+      "convert_to_template":  "true",
+      "cluster":              "{{ user `vcenter_cluster` }}",
+
+      "template":             "{{ user `base_template` }}",
+
+      "cd_files":             ["{{user `cd_dir`}}/user-data", "{{user `cd_dir`}}/meta-data"],
+      "cd_label":             "cidata",
+
+      "ssh_username":         "{{ user `ssh_user` }}",
+      "ssh_private_key_file": "{{ user `ssh_private_key_file` }}",
+
+      "CPUs":                 "{{ user `cpu` }}",
+      "RAM":                  "{{ user `memory` }}",
+      "RAM_reserve_all":      true,
+      "disk_size":            "{{ user `disk_size` }}"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type":                 "shell-local",
+      "inline":               ["../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["cd ../../ovh_glasswall-kubespray-jk/", "sops -i -d .state/kube_config_wc.yaml", "sed -i 's/172.17.0.100/51.89.210.150/' .state/kube_config_wc.yaml", "sops -i -e .state/kube_config_wc.yaml"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl wc apply -f ../local-storage-pv.yaml"]
+    },
+    {
+      "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
+      "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s apply wc"]
+    },
+    {
+      "type":                 "shell",
+      "inline":               ["sudo chown -R 1000:1000 /mnt/disks/"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
+    },
+    {
+      "type":                 "shell-local",
+      "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
+    }
+  ]
+}

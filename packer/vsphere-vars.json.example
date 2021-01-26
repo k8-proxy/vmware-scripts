@@ -1,0 +1,20 @@
+{
+    "vcenter_server":       "changeme",
+    "vcenter_username":     "changeme",
+    "vcenter_password":     "changeme",
+    "vcenter_host":         "changeme",
+    "vcenter_cluster":      "changeme",
+    "vcenter_datastore":    "changeme",
+
+    "base_template":        "ubuntu-bionic-18.04-cloudimg-20210108",
+    "taget_template_dir":   "_Template",
+
+    "ssh_user":             "ubuntu",
+    "ssh_private_key_file": "~/.ssh/id_rsa",
+
+    "cd_dir":               "cdrom",
+    "vm_name":              "ck8s_ubuntu18",
+    "memory":               "5120",
+    "cpu":                  "4",
+    "disk_size":            "20000"
+}
