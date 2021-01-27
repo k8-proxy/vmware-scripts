@@ -18,37 +18,23 @@ from pyVim.connect import SmartConnectNoSSL, Disconnect
 from pyVmomi import vim, vmodl
 
 # from .ovf_handler import OvfHandler
-from k8_vmware.vsphere.OVA import OvfHandler
+from k8_vmware.vsphere.OVA import OvfHandler, OVA
 from k8_vmware.vsphere.Sdk import Sdk
 
-
-def setup_args():
-    parser = cli.build_arg_parser()
-    parser.add_argument('--ova-path',
-                        help='Path to the OVA file, can be local or a URL.')
-    parser.add_argument('--vm-name',
-                        help='VM name to be created.')
-    parser.add_argument('-d', '--datacenter',
-                        help='Name of datacenter to search on. '
-                             'Defaults to first.')
-    parser.add_argument('-r', '--resource-pool',
-                        help='Name of resource pool to use. '
-                             'Defaults to largest memory free.')
-    parser.add_argument('-ds', '--datastore',
-                        help='Name of datastore to use. '
-                             'Defaults to largest free space in datacenter.')
-    return cli.prompt_for_password(parser.parse_args())
+from automated-deployment.config import Config
 
 
-class VMDeployOVA():
+class VMDeployOVA:
 
     def __init__(self):
-        self.args = setup_args()
+        self.sdk = Sdk()
+        self.__vsphere_server_details = Config().vsphere_server_details()
+
         # print(self.args.host, args.user, args.password, args.port)
         try:
-            self.si = SmartConnectNoSSL(host=self.args.host,
-                                        user=self.args.user,
-                                        pwd=self.args.password,
+            self.si = SmartConnectNoSSL(host=self.__vsphere_server_details.get("host"),
+                                        user=self.__vsphere_server_details.get("username"),
+                                        pwd=self.args.__vsphere_server_details.get("password"),
                                         port=self.args.port)
 
             atexit.register(Disconnect, self.si)
@@ -141,12 +127,10 @@ class VMDeployOVA():
             raise Exception('Failed to find any free datastores on %s' % dc.name)
         return largest
 
-    @staticmethod
-    def power_on_vm(host, user, pwd, vm_name):
+    def power_on_vm(self, host, user, pwd, vm_name):
 
-        sdk = Sdk()
         try:
-            vm = sdk.find_by_name(vm_name)
+            vm = self.sdk.find_by_name(vm_name)
             vm.task().power_on()
         except Exception as e:
             print(e)
@@ -164,13 +148,13 @@ class VMDeployOVA():
 
         # get datacenter
         if self.args.datacenter:
-            dc = sdk.datacenter()
+            dc = self.sdk.datacenter()
         else:
             dc = self.si.content.rootFolder.childEntity[0]
         
         # define datastore
         if self.args.datastore:
-            ds = sdk.datastore()
+            ds = self.sdk.datastore()
         else:
             ds = VMDeployOVA.get_largest_free_ds(dc)
 
@@ -225,10 +209,12 @@ class VMDeployOVA():
     def main(self):
 
         # deploy the ova
-        self.deploy()
-        
+        # self.deploy() 
+        ova = OVA() # TODO: edit k8-vmware upload-ova method with entity name param
+        ova.upload_ova(self.args.ova_path, vm_name=self.args.vm_name)
+
         # power on the vm
-        return(power_on_vm(self.args.host, args.user, args.password, args.vm_name))
+        return(self.power_on_vm(self.args.host, self.args.user, self.args.password, self.args.vm_name))
 
 
 if __name__ == "__main__":
