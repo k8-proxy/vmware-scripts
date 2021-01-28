@@ -1,18 +1,8 @@
-# Ubuntu Packer template for VMware  ESXi
+# Ubuntu Packer template for VMware vSphere
 
 ## Overview
 
-Packer template to build Ubuntu VM with the following configuration
-
-- Hostname: **glasswall**
-
-- Username: **glasswall**
-
-- Password: **Gl@$$wall**
-
-- sudo enabled for user **glasswall** , with no password prompt
-
-- Predictable network interfaces naming  (i.e: **eth0**)
+Packer template to build a single node Compliant Kubernetes workload cluster VM with ICAP adaptation service.
 
 ## Build requirements
 
@@ -27,7 +17,6 @@ the machine running this packer template must have the following installed
 ### ESXi Host
 
 - Minimum 60GB free storage, 4GB free RAM at the build time
-- **Guest IP Hack** enabled, you can enable it by running the following on the ESXi host `esxcli system settings advanced set -o /Net/GuestIPHack -i 1`
 - IP address accessible from the packer build machine (To use for the VM)
 
 ### Usage
@@ -35,15 +24,15 @@ the machine running this packer template must have the following installed
 - Prepare the project by running the following
   
   - ```bash
-    git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts
+    git clone --single-branch -b vsphere-clone https://github.com/elastisys/vmware-scripts
     cd vmware-scripts/packer/
-    cp vars.json.example vars.json
+    cp vsphere-vars.json.example vsphere-vars.json
     cp cdrom/user-data.example cdrom/user-data
     ```
-  - tweak the configuration in vars.json as needed
+  - tweak the configuration in vsphere-vars.json as needed
     
     ```bash
-    nano vars.json # then tweak parameters as needed, and exit
+    nano vsphere-vars.json # then tweak parameters as needed, and exit
     ```
   - tweak the configuration in cdrom/user-data as needed, as indicated in the comments
     
@@ -62,7 +51,7 @@ the machine running this packer template must have the following installed
 - Start the build
   
   ```bash
-  PACKER_LOG=1 PACKER_LOG_PATH=packer.log packer build -on-error=ask -var-file=vars.json esxi.json
+  PACKER_LOG=1 PACKER_LOG_PATH=packer.log packer build -on-error=ask -var-file=vsphere-vars.json vsphere.json
   ```
 
 - You should be able to find the ova under **output-vmware-iso/** directory
