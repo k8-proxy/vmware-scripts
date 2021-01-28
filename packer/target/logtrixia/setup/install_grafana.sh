@@ -8,5 +8,6 @@ echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/a
 sudo apt-get update
 sudo apt-get install -y grafana
 sudo systemctl daemon-reload
+sudo systemctl enable grafana-server
 sudo systemctl start grafana-server
 sudo systemctl status grafana-server --no-pager
