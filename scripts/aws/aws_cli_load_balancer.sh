@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#aws cli load balancer and auto scaling script
+
 key=packer
 subnet_id=
 vpc_id=
