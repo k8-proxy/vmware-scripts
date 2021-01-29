@@ -33,6 +33,7 @@
   "provisioners": [
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
     },
     {
@@ -41,6 +42,7 @@
     },
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl wc apply -f ../local-storage-pv.yaml"]
     },
     {
@@ -54,18 +56,22 @@
     },
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
     },
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
     },
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
     },
     {
       "type":                 "shell-local",
+      "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/ovh_glasswall-kubespray-jk/"],
       "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
     }
   ]
