@@ -15,7 +15,6 @@ auto_scaling_group_name=icap-auto-scaling-group
 target_group_name=icap-targets
 
 #Deleting existing load balancer
-
 existing_load_balancer=$(aws elbv2 describe-load-balancers --names $load_balancer_name 2<&- )
 existing_load_balancer_arn=$(echo $existing_load_balancer | jq -r ".LoadBalancers[0].LoadBalancerArn")
 if [ -n  "${existing_load_balancer_arn}" ]; then
