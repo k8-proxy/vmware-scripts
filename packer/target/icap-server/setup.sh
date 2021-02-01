@@ -78,6 +78,17 @@ kubectl create -n management-ui secret generic transactionqueryserviceref --from
 kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 
+kubectl create -n management-ui secret generic smtpsecret \
+	--from-literal=SmtpHost=$SMTPHOST \
+	--from-literal=SmtpPort=$SMTPPORT \
+	--from-literal=SmtpUser=$SMTPUSER \
+	--from-literal=SmtpPass=$SMTPPASS \
+	--from-literal=TokenSecret='12345678901234567890123456789012' \
+	--from-literal=TokenLifetime='00:01:00' \
+	--from-literal=EncryptionSecret='12345678901234567890123456789012' \
+	--from-literal=ManagementUIEndpoint='http://management-ui:8080' \
+	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
+
 pushd administration
 helm upgrade administration --install . --namespace management-ui
 popd
