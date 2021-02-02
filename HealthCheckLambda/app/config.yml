@@ -5,22 +5,17 @@ config:
   logfile: log
 
 hosts:
-  - address: 8.8.8.8
-    prot: "icmp"
-  - address: google.com
-    prot: icmp
-  - address: google.com
+  - address: glasswallsolutions.com
     prot: httpstatus
     httpstatus: 200
-  - address: google.com
+  - address: glasswallsolutions.com
     prot: httpstring
-    httpstring: gdoogle
+    httpstring: Glasswall
   - address: 3.139.22.215
     prot: tcp
     tcpport: 1344
-    icaptestfile: a.pdf
+  - address: 3.139.22.215
+    prot: icap
+    icaptestfile: /function/a.pdf
     icapservice: gw_rebuild
     icaptimeout: 60
-  - address: 3.139.22.215
-    prot: tcp
-    tcpport: 1344

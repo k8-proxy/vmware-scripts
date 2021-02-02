@@ -69,7 +69,28 @@ docker push 938576707481.dkr.ecr.us-east-1.amazonaws.com/healthchecklambda:0.9
 * Choose Container Image and uploaded image
 * Choose Test - use defaults
 
-### Create amd tets Lambda function using CLI (to_implement/check)
+ICAP Test to fix 
+
+### Create and tets Lambda function using CLI (to_implement/check)
 ```
 aws lambda create-function  --runtime to_implement/check -role to_implement/check --function-name HealthCheck2 --code ImageUri=938576707481.dkr.ecr.us-east-1.amazonaws.com/healthchecklambda:0.9 --package-type Image
+```
+
+### Dubeg locally
+```
+docker build -t health:latest .
+```
+
+This one is not working:
+
+```
+docker run -it --entrypoint "/usr/local/bin/python3 /function/pyCheck.py"  health:latest
+```
+
+This is working OK:
+
+```
+docker run -it --entrypoint "/bin/bash"  health:latest
+/usr/local/bin/python3 /function/pyCheck.py #This is working
+exit
 ```
