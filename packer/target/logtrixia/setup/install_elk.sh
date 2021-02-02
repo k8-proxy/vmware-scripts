@@ -14,10 +14,9 @@ echo "Configuring certificates"
 cd elastic
 sudo docker-compose -f create-certs.yml run --rm create_certs
 cd ..
-sudo cp -R elastic/certificates /etc/logtrixia/certificates
-sudo cp -R elastic/utils /etc/logtrixia/utils
+
 sudo cp elastic/elastic-docker-tls.yml /etc/logtrixia/.
-sudo cp -R nginx-config /etc/logtrixia/.
+
 sudo cp logtrixia.service /etc/systemd/system/logtrixia.service
 sudo systemctl daemon-reload
 sudo systemctl enable logtrixia
