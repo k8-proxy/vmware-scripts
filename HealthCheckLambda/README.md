@@ -73,3 +73,12 @@ docker push 938576707481.dkr.ecr.us-east-1.amazonaws.com/healthchecklambda:0.9
 ```
 aws lambda create-function  --runtime to_implement/check -role to_implement/check --function-name HealthCheck2 --code ImageUri=938576707481.dkr.ecr.us-east-1.amazonaws.com/healthchecklambda:0.9 --package-type Image
 ```
+
+### Dubeg locally
+```
+docker build -t health:latest .
+docker run -it --entrypoint "/usr/local/bin/python3 /function/pyCheck.py"  health:latest #Not working now
+docker run -it --entrypoint "/bin/bash"  health:latest
+/usr/local/bin/python3 /function/pyCheck.py #This is working
+exit
+```
