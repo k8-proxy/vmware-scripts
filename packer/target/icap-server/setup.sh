@@ -29,8 +29,8 @@ ICAP_BRANCH=${ICAP_BRANCH:-k8-main}
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
 
 # Admin ui default credentials
-mkdir -p /var/local/rancher/host/c/userstore
-cp -r default-user/* /var/local/rancher/host/c/userstore/
+sudo mkdir -p /var/local/rancher/host/c/userstore
+sudo cp -r default-user/* /var/local/rancher/host/c/userstore/
 
 # Create namespaces
 kubectl create ns icap-adaptation
