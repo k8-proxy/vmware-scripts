@@ -89,7 +89,6 @@ helm upgrade --install \
 --set ingress.tls.crt=$crt \
 --set ingress.tls.key=$key \
 reverse-proxy ~/s-k8-proxy-rebuild/stable-src/chart/
-rm -rf ~/s-k8-proxy-rebuild
 
 # deploy monitoring solution
 cd ~/k8-rebuild
