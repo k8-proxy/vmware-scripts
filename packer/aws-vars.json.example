@@ -2,8 +2,16 @@
       "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
       "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
       "region": "eu-west-1",
-      "vm_name": "glasswall-ec2",
+      "vm_name": "glasswall-compliant-kubernetes-ec2-3",
       "github_sha": null,
       "team_tag":"",
-      "owner_tag":""
+      "owner_tag":"",
+
+      "user_data_file": "cdrom/user-data-aws",
+
+      "ssh_user":             "ubuntu",
+      "ssh_keypair_name":     "",
+      "ssh_private_key_file": "",
+
+      "security_group_id":    ""
 }
