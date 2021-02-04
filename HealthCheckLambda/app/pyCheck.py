@@ -19,6 +19,7 @@ import platform
 
 log_dest = 'console'
 logger = None
+default_config_url = 'https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheckLambda/app/config.yml'
 
 
 def checksum(filename, hashfunc):
@@ -38,6 +39,7 @@ def log(log, end='\n', flush=True):
 def main(args):
     global log_dest
     global logger
+    future_log = ''
 
     retcode = 0
     config = None
@@ -45,11 +47,27 @@ def main(args):
     SSLVerify = False
     logging.captureWarnings(True)
 
-    try:
-        with open("config.yml") as file:
-            config = yaml.load(file, Loader=yaml.Loader)
-    except OSError:
-        pass
+    for f in args + [ default_config_url, os.path.dirname(__file__) + '/config.yml' ]:
+        url = urllib.parse.urlparse(f,scheme='http')
+        if url.netloc!='':
+            try:
+                r = requests.get(url.geturl(), verify=SSLVerify, timeout=5)
+            except requests.exceptions.ConnectTimeout:
+                r = None
+            except requests.exceptions.ConnectionError:
+                r = None
+            if r is not None and r.ok:
+                config = yaml.load(r.text, Loader=yaml.Loader)
+                future_log += f'Loaded config from {url.geturl()}'
+                break
+        else:
+            try:
+                with open(f) as file:
+                    config = yaml.load(file, Loader=yaml.Loader)
+                    future_log += f'Loaded config from {f}'
+                    break
+            except OSError:
+                pass
 
     if not config:
         logging.critical('invalid config')
@@ -76,7 +94,12 @@ def main(args):
         fh.setFormatter(logging.Formatter(f'%(asctime)s {platform.node()}: %(message)s'))
         logger.addHandler(fh)
 
+
     istty = log_dest == 'console' and sys.stdout.isatty()
+
+    if istty: print(future_log)
+    else: log(future_log)
+    future_log = ''
 
     FAIL = "\033[1;91m" + "FAIL" + "\033[0m" if istty else "FAIL"
     PASS = "\033[1;92m" + "PASS" + "\033[0m" if istty else "PASS"
