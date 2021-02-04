@@ -26,9 +26,6 @@ write_files:
   content: |
     #!/bin/bash
 
-    echo "Sleep for 120 seconds"
-    sleep 120
-
     echo "
 
 
@@ -97,15 +94,42 @@ write_files:
   content: |
     [Unit]
     Description=InitConfig
-    After=kubepods.slice
+    After=kubelet.service
 
     [Service]
     Type=oneshot
-    #ExecStart=/usr/bin/openvt -s -w /usr/bin/initconfig.sh
+    ExecStartPre=kubectl get pods --kubeconfig=/etc/kubernetes/admin.conf -A
     ExecStart=/usr/bin/initconfig.sh
 
     RemainAfterExit=yes
     TimeoutSec=0
+
+    Restart=on-failure
+    RestartSec=30
+
+    # Output needs to appear in instance console output
+    StandardOutput=journal+console
+    StandardError=journal+console
+    SyslogIdentifier=initconfig
+
+    [Install]
+    WantedBy=cloud-init.target
+
+- path: /etc/systemd/system/initconfig-prometheus.service
+  content: |
+    [Unit]
+    Description=InitConfigPrometheus
+    After=initconfig.service
+
+    [Service]
+    Type=oneshot
+    ExecStart=chown -R 1000:1000 /mnt/disks/prometheus-db
+
+    RemainAfterExit=yes
+    TimeoutSec=0
+
+    Restart=always
+    RestartSec=30
 
     # Output needs to appear in instance console output
     StandardOutput=journal+console
