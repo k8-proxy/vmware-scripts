@@ -4,6 +4,7 @@ This script can be used to Check Health of servers and services not only on AWS,
 
 
 ### Features 
+* this version can pull config from http server https://raw.githubusercontent.com/MariuszFerdyn/vmware-scripts/main/HealthCheckLambda/app/config.yml (can be changed in .py file) if the file is not reachable use local config
 * ping check
 * TCP port check
 * http/https code status check (eg. 200)
