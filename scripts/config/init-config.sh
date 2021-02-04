@@ -12,7 +12,7 @@ sudo apt update -y && sudo apt upgrade -y
 # cloning vmware scripts repo
 git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
 sudo apt update -y && sudo apt upgrade -y
-wait 10s
+sleep 10s
 echo "updated apt repo"
 
 # install needed packages
