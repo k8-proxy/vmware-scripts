@@ -9,6 +9,9 @@ echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER >/dev/null
 # update packages
 sudo apt update -y && sudo apt upgrade -y
 
+# cloning vmware scripts repo
+git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
+
 # install needed packages
 sudo apt install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban
 sudo systemctl enable fail2ban.service
@@ -32,9 +35,6 @@ sudo swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab 
 
 # update grub
 sudo update-grub
-
-# cloning vmware scripts repo
-git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
 
 # installing the wizard
 sudo install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
