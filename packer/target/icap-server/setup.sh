@@ -113,6 +113,7 @@ sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh
 sudo service ssh restart
 
 # Integrate Instance based healthcheck
+cd $( dirname $0 )
 sudo apt install c-icap -y
 cp healthcheck ~
 chmod +x ~/healthcheck/healthcheck.sh
