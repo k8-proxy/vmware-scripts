@@ -111,3 +111,20 @@ SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 sudo service ssh restart
+
+# Integrate Instance based healthcheck
+sudo apt install c-icap -y
+cp healthcheck ~
+chmod +x ~/healthcheck/healthcheck.sh
+sudo apt install python3-pip -y
+pip3 install fastapi -y
+sudo apt install uvicorn -y
+pip3 install uvloop
+pip3 install httptools
+pip3 install requests
+pip3 install aiofiles
+sudo apt install gunicorn -y
+sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+crontab -l | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
