@@ -117,8 +117,8 @@ sudo apt install c-icap -y
 cp healthcheck ~
 chmod +x ~/healthcheck/healthcheck.sh
 sudo apt install python3-pip -y
-pip3 install fastapi -y
-sudo apt install uvicorn -y
+pip3 install fastapi
+pip3 install uvicorn
 pip3 install uvloop
 pip3 install httptools
 pip3 install requests
