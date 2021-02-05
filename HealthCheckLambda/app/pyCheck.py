@@ -47,7 +47,7 @@ def main(args):
     SSLVerify = False
     logging.captureWarnings(True)
 
-    for f in args + [ default_config_url, os.path.dirname(__file__) + '/config.yml' ]:
+    for f in args + [ default_config_url, '/function/config.yml' ]:
         url = urllib.parse.urlparse(f,scheme='http')
         if url.netloc!='':
             try:
