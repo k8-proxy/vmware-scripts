@@ -22,7 +22,6 @@ esac
 }
 
 function chpass_dialog () {
-USER=glasswall
 npw1=$(dialog $DIALOG_OPTS --ok-label "Submit" --insecure --passwordbox "New password for $USER" 0 0 )
 npw2=$(dialog $DIALOG_OPTS --ok-label "Submit" --insecure --passwordbox "Confirm password for $USER" 0 0 )
 echo -e "$npw1\n$npw2" | sudo passwd $USER 2>/dev/null || errorbox "Failed to change password"
