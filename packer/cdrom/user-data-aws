@@ -79,14 +79,17 @@ write_files:
     cat /home/ubuntu/influxdb-url.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/remoteWrite/0/url", "value":"'{}'"}]'
     kubectl delete pod -n monitoring prometheus-kube-prometheus-stack-prometheus-0
 
-    kubectl get cm -n fluentd fluentd-fluentd-elasticsearch -o yaml | sed 's/151-glasswall-ovh-kubespray-wc/'"${cluster}"'/' | kubectl apply -f -
-    kubectl get cm -n kube-system fluentd-system-fluentd-elasticsearch -o yaml | sed 's/151-glasswall-ovh-kubespray-wc/'"${cluster}"'/' | kubectl apply -f -
+    kubectl get cm -n fluentd fluentd-fluentd-elasticsearch -o yaml | sed 's/CLUSTER_NAME/'"${cluster}"'/' | kubectl apply -f -
+    kubectl get cm -n kube-system fluentd-system-fluentd-elasticsearch -o yaml | sed 's/CLUSTER_NAME/'"${cluster}"'/' | kubectl apply -f -
     kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_HOST=elastic.${service_cluster}
     kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_HOST=elastic.${service_cluster}
     kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_USER=${logging_username}
     kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_USER=${logging_username}
     cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
     cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n kube-system elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
+
+    while [ ! -d /mnt/disks/prometheus-db ]; do sleep 10; done
+    chown -R 1000:1000 /mnt/disks/prometheus-db
 
     exit
 
