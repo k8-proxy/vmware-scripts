@@ -1,0 +1,30 @@
+module(load="imudp")
+input(type="imudp" port="514")
+module(load="mmjsonparse")
+module(load="omelasticsearch")
+module(load="mmutf8fix")
+
+template(name="plain-syslog" type="list" option.json="on") {
+    constant(value="{")
+    constant(value="\"@timestamp\":\"")     property(name="timereported" dateFormat="rfc3339")
+    constant(value="\",\"host\":\"")        property(name="hostname")
+    constant(value="\",\"severity-num\":")  property(name="syslogseverity")
+    constant(value=",\"facility-num\":")    property(name="syslogfacility")
+    constant(value=",\"severity\":\"")      property(name="syslogseverity-text")
+    constant(value="\",\"facility\":\"")    property(name="syslogfacility-text")
+    constant(value="\",\"syslogtag\":\"")   property(name="syslogtag")
+    constant(value="\",\"message\":\"")     property(name="msg")
+    constant(value="\"}")
+}
+
+template(name="logstash-index" type="string" string="logstash-%$YEAR%.%$MONTH%.%$DAY%")
+
+action(type="omelasticsearch"
+  server="91.109.26.22:9200"
+  uid="$ELASTICSEARCH_USERNAME"
+  pwd="$ELASTICSEARCH_PASSWORD"
+  template="plain-syslog"
+  searchIndex="logstash-index"
+  dynSearchIndex="on"
+  bulkmode="on"
+  errorfile="/var/log/omelasticsearch.log")

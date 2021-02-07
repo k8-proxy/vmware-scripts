@@ -1,10 +1,20 @@
 #!/bin/bash
+sudo mv /tmp/setup/10-elasticsearch.conf.tmpl /tmp/setup/haproxy.sh ~
 sudo ufw allow 22
 sudo ufw allow 1344
 sudo ufw allow 1345
 sudo ufw enable
-sudo apt-get install -y haproxy
+sudo apt-get install -y haproxy rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch rsyslog-mmutf8fix
+sudo envsubst < 10-elasticsearch.conf.tmpl > /etc/rsyslog.d/elasticsearch.conf 
+sudo systemcl restart rsyslog
 sudo tee -a /etc/haproxy/haproxy.cfg << EOF > /dev/null
+#Logging
+global
+  log 127.0.0.1:514  local0 
+  profiling.tasks on
+defaults
+  log global
+  log-format "%ci:%cp [%t] %ft %b/%s %Tw/%Tc/%Tt %B %ts %ac/%fc/%bc/%sc/%rc %sq/%bq"
 #The frontend is the node by which HAProxy listens for connections.
 frontend ICAP
 bind 0.0.0.0:1344
@@ -16,6 +26,7 @@ balance roundrobin
 mode tcp
 server icap01 54.77.168.168:1344 check
 server icap02 3.139.22.215:1344 check
+
 #The frontend is the node by which HAProxy listens for connections.
 frontend S-ICAP
 bind 0.0.0.0:1345
@@ -27,9 +38,12 @@ balance roundrobin
 mode tcp
 server icap01 54.77.168.168:1345 check
 server icap02 3.139.22.215:1345 check
+
 #Haproxy monitoring Webui(optional) configuration, access it <Haproxy IP>:32700
 listen stats
 bind :32700
+option http-use-htx
+http-request use-service prometheus-exporter if { path /metrics }
 stats enable
 stats uri /
 stats hide-version
