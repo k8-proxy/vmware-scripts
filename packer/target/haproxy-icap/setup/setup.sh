@@ -1,20 +1,6 @@
 #!/bin/bash
-sudo mv /tmp/setup/10-elasticsearch.conf.tmpl /tmp/setup/haproxy.sh ~
-sudo ufw allow 22
-sudo ufw allow 1344
-sudo ufw allow 1345
-sudo ufw enable
-sudo apt-get install -y haproxy rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch rsyslog-mmutf8fix
-sudo envsubst < 10-elasticsearch.conf.tmpl > /etc/rsyslog.d/elasticsearch.conf 
-sudo systemcl restart rsyslog
+sudo apt-get install -y
 sudo tee -a /etc/haproxy/haproxy.cfg << EOF > /dev/null
-#Logging
-global
-  log 127.0.0.1:514  local0 
-  profiling.tasks on
-defaults
-  log global
-  log-format "%ci:%cp [%t] %ft %b/%s %Tw/%Tc/%Tt %B %ts %ac/%fc/%bc/%sc/%rc %sq/%bq"
 #The frontend is the node by which HAProxy listens for connections.
 frontend ICAP
 bind 0.0.0.0:1344
