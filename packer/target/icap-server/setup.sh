@@ -113,10 +113,16 @@ sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh
 sudo service ssh restart
 
 # Integrate Instance based healthcheck
+ls
+dir
 cd $( dirname $0 )
+ls
+
+sudo apt update
 sudo apt install c-icap -y
 cp healthcheck ~
 chmod +x ~/healthcheck/healthcheck.sh
+sudo apt-get install python-pip-whl python3-dev python3-wheel
 sudo apt install python3-pip -y
 pip3 install fastapi
 pip3 install uvicorn
