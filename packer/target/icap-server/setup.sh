@@ -12,13 +12,12 @@ fi
 
 # Integrate Instance based healthcheck
 pwd
-ls
 sudo apt update -y
 sudo apt install c-icap -y
 cp -r healthcheck ~
 chmod +x ~/healthcheck/healthcheck.sh
-sudo apt-get install python-pip-whl python3-dev python3-wheel
 sudo apt install python3-pip -y
+export PATH=$PATH:$HOME/.local/bin
 pip3 install fastapi
 pip3 install uvicorn
 pip3 install uvloop
@@ -26,12 +25,10 @@ pip3 install httptools
 pip3 install requests
 pip3 install aiofiles
 sudo apt install gunicorn -y
-export PATH=$PATH:$HOME/.local/bin
 sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
-sudo touch /var/spool/cron/crontabs/ubuntu
-crontab -l | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
