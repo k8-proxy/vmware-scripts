@@ -1,0 +1,22 @@
+config:
+  log: console
+  #log: syslog
+  #log: file
+  logfile: log
+
+hosts:
+  - prot: "icmp"
+    address: 8.8.8.8
+  - prot: icmp
+    address: google.com
+  - address: google.com
+    prot: httpstatus
+    httpstatus: 200
+  - prot: httpstring
+    address: 52.215.222.98
+    httpstring: Glasswall
+  - prot: icap
+    address: 54.77.168.168
+    icaptestfile: a.pdf
+    icaptimeout: 90
+    icapservice: gw_rebuild
