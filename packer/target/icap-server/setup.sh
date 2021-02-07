@@ -15,7 +15,7 @@ pwd
 ls
 sudo apt update -y
 sudo apt install c-icap -y
-cp healthcheck ~
+cp -r healthcheck ~
 chmod +x ~/healthcheck/healthcheck.sh
 sudo apt-get install python-pip-whl python3-dev python3-wheel
 sudo apt install python3-pip -y
@@ -30,7 +30,7 @@ export PATH=$PATH:$HOME/.local/bin
 sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
-touch /var/spool/cron/crontabs/ubuntu
+sudo touch /var/spool/cron/crontabs/ubuntu
 crontab -l | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
 
 # install k3s
