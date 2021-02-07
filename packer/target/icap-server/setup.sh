@@ -113,9 +113,10 @@ sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh
 sudo service ssh restart
 
 # Integrate Instance based healthcheck
+pwd
 ls
-dir
 cd $( dirname $0 )
+pwd
 ls
 
 sudo apt update
