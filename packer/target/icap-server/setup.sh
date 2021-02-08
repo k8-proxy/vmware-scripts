@@ -10,6 +10,26 @@ chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
 fi
 
+# Integrate Instance based healthcheck
+pwd
+sudo apt update -y
+sudo apt install c-icap -y
+cp -r healthcheck ~
+chmod +x ~/healthcheck/healthcheck.sh
+sudo apt install python3-pip -y
+export PATH=$PATH:$HOME/.local/bin
+pip3 install fastapi
+pip3 install uvicorn
+pip3 install uvloop
+pip3 install httptools
+pip3 install requests
+pip3 install aiofiles
+sudo apt install gunicorn -y
+sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+
 # install k3s
 curl -sfL https://get.k3s.io | sh -
 mkdir ~/.kube && sudo install -T /etc/rancher/k3s/k3s.yaml ~/.kube/config -m 600 -o $USER
@@ -111,3 +131,4 @@ SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 sudo service ssh restart
+
