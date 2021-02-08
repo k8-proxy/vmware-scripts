@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install -y
+sudo apt-get install haproxy -y
 sudo tee -a /etc/haproxy/haproxy.cfg << EOF > /dev/null
 #The frontend is the node by which HAProxy listens for connections.
 frontend ICAP
