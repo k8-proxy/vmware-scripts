@@ -1,9 +1,5 @@
 #!/bin/bash
-sudo ufw allow 22
-sudo ufw allow 1344
-sudo ufw allow 1345
-sudo ufw enable
-sudo apt-get install -y haproxy
+sudo apt-get install haproxy -y
 sudo tee -a /etc/haproxy/haproxy.cfg << EOF > /dev/null
 #The frontend is the node by which HAProxy listens for connections.
 frontend ICAP
@@ -16,6 +12,7 @@ balance roundrobin
 mode tcp
 server icap01 54.77.168.168:1344 check
 server icap02 3.139.22.215:1344 check
+
 #The frontend is the node by which HAProxy listens for connections.
 frontend S-ICAP
 bind 0.0.0.0:1345
@@ -27,9 +24,12 @@ balance roundrobin
 mode tcp
 server icap01 54.77.168.168:1345 check
 server icap02 3.139.22.215:1345 check
+
 #Haproxy monitoring Webui(optional) configuration, access it <Haproxy IP>:32700
 listen stats
 bind :32700
+option http-use-htx
+http-request use-service prometheus-exporter if { path /metrics }
 stats enable
 stats uri /
 stats hide-version

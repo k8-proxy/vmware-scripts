@@ -45,7 +45,8 @@ default_backend icap_pool
 backend icap_pool
 balance roundrobin
 mode tcp
-#backend1
+server icap01 54.77.168.168:1344 check
+server icap02 3.139.22.215:1344 check
 
 #The frontend is the node by which HAProxy listens for connections.
 frontend S-ICAP
@@ -56,15 +57,18 @@ default_backend s-icap_pool
 backend s-icap_pool
 balance roundrobin
 mode tcp
-#backend2
+server icap01 54.77.168.168:1345 check
+server icap02 3.139.22.215:1345 check
 
 #Haproxy monitoring Webui(optional) configuration, access it <Haproxy IP>:32700
 listen stats
-    bind :32700
-    stats enable
-    stats uri /
-    stats hide-version
-    stats auth someuser:password
+bind :32700
+option http-use-htx
+http-request use-service prometheus-exporter if { path /metrics }
+stats enable
+stats uri /
+stats hide-version
+stats auth username:password
 EOF
 
 cp -f haproxy.cfg.template haproxy.cfg.tmp
