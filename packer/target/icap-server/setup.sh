@@ -45,7 +45,7 @@ echo "Done installing helm"
 
 # get source code, we clone in in home dir so we can easilly update in place
 cd ~
-ICAP_BRANCH=${ICAP_BRANCH:-k8-main}
+ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
 
 # Clone ICAP SOW Version 
