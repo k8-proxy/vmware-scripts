@@ -126,12 +126,13 @@ write_files:
 
     [Service]
     Type=oneshot
+    ExecStartPre=test -d /mnt/disks/prometheus-db
     ExecStart=chown -R 1000:1000 /mnt/disks/prometheus-db
 
     RemainAfterExit=yes
     TimeoutSec=0
 
-    Restart=always
+    Restart=on-failure
     RestartSec=30
 
     # Output needs to appear in instance console output
