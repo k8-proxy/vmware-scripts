@@ -33,7 +33,8 @@
         "run_tags": {
             "Name": "Packer Builder {{user `vm_name`}}",
             "Team": "{{user `team_tag`}}",
-            "Owner": "{{user `owner_tag`}}"
+            "Owner": "{{user `owner_tag`}}",
+            "Scope": "#k8s-compliant-kubernetes"
         },
         "launch_block_device_mappings": [
           {
@@ -45,6 +46,10 @@
       }
     ],
       "provisioners": [
+        {
+          "type":   "shell-local",
+          "inline": ["cd {{ user `ck8s_config_path` }}", "./secrets-generator.sh", "export GNUPGHOME=\"$(mktemp -d)\"", "echo $GNUPGHOME > gnupghome.txt", "./pgp-generator.sh", "sops -i -e secrets.yaml", "sops -i -e wc-config/ssh/id_rsa"]
+        },
         {
           "type": "shell",
           "inline": [ "ec2metadata --local-ipv4 > /tmp/private_ip" ]
@@ -67,30 +72,30 @@
         },
         {
           "type":                 "shell-local",
-          "inline":               ["sed 's/\\./-/g' private_ip > private_ip_underscore", "PRIVATE_IP=$(cat private_ip_underscore)", "echo \"VM Private IP is: ${PRIVATE_IP} \"", "cd ../../aws_glasswall-kubespray-jk/wc-config", "sed 's/{PRIVATE_IP}/'\"${PRIVATE_IP}\"'/g' inventory.ini.template > inventory.ini"]
+          "inline":               ["sed 's/\\./-/g' private_ip > private_ip_underscore", "PRIVATE_IP=$(cat private_ip_underscore)", "echo \"VM Private IP is: ${PRIVATE_IP} \"", "cd {{ user `ck8s_config_path` }}/wc-config", "sed 's/{PRIVATE_IP}/'\"${PRIVATE_IP}\"'/g' inventory.ini.template > inventory.ini"]
         },
         {
           "type":                 "shell-local",
-          "inline":               ["PUBLIC_IP=$(cat public_ip)", "echo \"VM Public IP is: ${PUBLIC_IP} \"", "cd ../../aws_glasswall-kubespray-jk/wc-config", "sed -i 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' inventory.ini", "sed 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' group_vars/k8s-cluster/k8s-cluster.yml.template > group_vars/k8s-cluster/k8s-cluster.yml"]
+          "inline":               ["PUBLIC_IP=$(cat public_ip)", "echo \"VM Public IP is: ${PUBLIC_IP} \"", "cd {{ user `ck8s_config_path` }}/wc-config", "sed -i 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' inventory.ini", "sed 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' group_vars/k8s-cluster/k8s-cluster.yml.template > group_vars/k8s-cluster/k8s-cluster.yml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
-          "inline":               ["../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"GNUPGHOME: \"$GNUPGHOME", "../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
-          "inline":               ["PRIVATE_IP=$(cat private_ip)", "PUBLIC_IP=$(cat public_ip)", "cd ../../aws_glasswall-kubespray-jk/", "sops -i -d .state/kube_config_wc.yaml", "sed -i 's/'172.17.0.100'/'\"${PUBLIC_IP}\"'/' .state/kube_config_wc.yaml", "sops -i -e .state/kube_config_wc.yaml"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "PRIVATE_IP=$(cat private_ip)", "PUBLIC_IP=$(cat public_ip)", "cd {{ user `ck8s_config_path` }}", "sops -i -d .state/kube_config_wc.yaml", "sed -i 's/'172.17.0.100'/'\"${PUBLIC_IP}\"'/' .state/kube_config_wc.yaml", "sops -i -e .state/kube_config_wc.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl wc apply -f ../local-storage-pv.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s apply wc"]
         },
         {
@@ -99,22 +104,22 @@
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH=/home/jakub/workspace/glasswall/gp-gov-uk-website/aws_glasswall-kubespray-jk/"],
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
         }
     ]
