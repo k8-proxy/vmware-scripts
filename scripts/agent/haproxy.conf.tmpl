@@ -1,0 +1,18 @@
+[INPUT]
+    Name        tail
+    Path        /var/log/haproxy.log
+    Parser      haproxy-tcp
+
+[OUTPUT]
+    Name            es
+    Match           *
+    Host            $ELASTICSEARCH_HOST
+    Port            $ELASTICSEARCH_PORT
+    HTTP_User       $ELASTICSEARCH_USERNAME
+    HTTP_Passwd     $ELASTICSEARCH_PASSWORD
+    tls             On
+    tls.verify      Off
+    Logstash_Format On
+    Logstash_Prefix haproxy
+    Replace_Dots    On
+    Retry_Limit     False
