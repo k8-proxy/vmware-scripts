@@ -7,7 +7,7 @@ partition_number=${partition_name: -1}
 sudo growpart $disk_name $partition_number
 sudo resize2fs $partition_name
 
-sudo tee -a update_partition <<EOF
+sudo tee -a /etc/init.d/update_partition <<EOF
 #!/bin/bash
 
 ### BEGIN INIT INFO
