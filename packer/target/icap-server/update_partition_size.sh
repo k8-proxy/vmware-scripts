@@ -4,8 +4,8 @@
 partition_name=$(df -h | grep -e /$ | cut -d" " -f1)
 disk_name=${partition_name:0: -1}
 partition_number=${partition_name: -1}
-growpart $disk_name $partition_number
-resize2fs $partition_name
+sudo growpart $disk_name $partition_number
+sudo resize2fs $partition_name
 
 sudo tee -a /etc/init.d/update_partition <<EOF
 #!/bin/bash
