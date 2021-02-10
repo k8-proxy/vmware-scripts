@@ -2,7 +2,7 @@
 
 # increase partition size to maximum disk size
 partition_name=$(df -h | grep -e /$ | cut -d" " -f1)
-disk_name=${partition_name:0: -1}
+disk_name=/dev/$(lsblk -io KNAME,TYPE,SIZE | grep disk | cut -d" " -f1)
 partition_number=${partition_name: -1}
 sudo growpart $disk_name $partition_number
 sudo resize2fs $partition_name
