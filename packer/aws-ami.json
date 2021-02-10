@@ -10,7 +10,8 @@
         "instance_type": "t3.large",
         "region": "{{user `region`}}",
         "secret_key": "{{user `aws_secret_key`}}",
-        "ssh_username": "ubuntu",
+        "ssh_username": "glasswall",
+        "ssh_password": "{{user `ssh_password`}}",
         "ssh_timeout": "20m",
         "type": "amazon-ebs",
         "ami_regions": "{{user `extra_regions`}}",
@@ -38,6 +39,10 @@
       }
     ],
       "provisioners": [
+        {
+            "type": "shell",
+            "inline": ["sleep 3m"]
+        },
         {
             "type": "shell",
             "script": "./scripts/config/init-config.sh"
