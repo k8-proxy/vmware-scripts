@@ -2,8 +2,8 @@
       "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
       "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
       "region": "eu-west-1",
-      "vm_name": "glasswall-compliant-kubernetes-ec2-7",
-      "github_sha": null,
+      "vm_name": "glasswall-compliant-kubernetes-ec2",
+      "github_sha": "{{env `CI_SHA_SHORT`}}",
       "team_tag":"Elastisys",
       "owner_tag":"jakub@elastisys.com",
 
