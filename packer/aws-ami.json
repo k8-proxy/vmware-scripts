@@ -35,7 +35,7 @@
             "Team": "{{user `team_tag`}}",
             "Owner": "{{user `owner_tag`}}",
             "Scope": "#k8s-compliant-kubernetes",
-            "Status": "Do not delete"
+            "Delete": "No"
         },
         "launch_block_device_mappings": [
           {
