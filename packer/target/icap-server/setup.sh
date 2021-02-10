@@ -136,7 +136,7 @@ helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONI
 
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
-printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
+printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd $USER
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 sudo service ssh restart
 
