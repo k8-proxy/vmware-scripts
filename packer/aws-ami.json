@@ -82,7 +82,7 @@
         {
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "ls -l ../../compliantkubernetes-kubespray/kubespray/", "../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "ls -l ../../compliantkubernetes-kubespray/", "ls -l ../../compliantkubernetes-kubespray/kubespray/", "../../compliantkubernetes-kubespray/bin/ck8s-kubespray apply wc"]
         },
         {
           "type":                 "shell-local",
