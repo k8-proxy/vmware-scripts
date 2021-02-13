@@ -5,30 +5,29 @@ source ./env
 fi
 
 # install wizard to setup network (for OVA)
-if [ -f ./update_partition_size.sh ] ; then
-chmod +x ./update_partition_size.sh
-./update_partition_size.sh
-fi
+# if [ -f ./update_partition_size.sh ] ; then
+# chmod +x ./update_partition_size.sh
+# ./update_partition_size.sh
+# fi
 
 # Integrate Instance based healthcheck
-pwd
-sudo apt update -y
-sudo apt install c-icap -y
-cp -r healthcheck ~
-chmod +x ~/healthcheck/healthcheck.sh
-sudo apt install python3-pip -y
-export PATH=$PATH:$HOME/.local/bin
-pip3 install fastapi
-pip3 install uvicorn
-pip3 install uvloop
-pip3 install httptools
-pip3 install requests
-pip3 install aiofiles
-sudo apt install gunicorn -y
-sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
-sudo systemctl start gunicorn
-sudo systemctl enable gunicorn
-crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+# sudo apt update -y
+# sudo apt install c-icap -y
+# cp -r healthcheck ~
+# chmod +x ~/healthcheck/healthcheck.sh
+# sudo apt install python3-pip -y
+# export PATH=$PATH:$HOME/.local/bin
+# pip3 install fastapi
+# pip3 install uvicorn
+# pip3 install uvloop
+# pip3 install httptools
+# pip3 install requests
+# pip3 install aiofiles
+# sudo apt install gunicorn -y
+# sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
+# sudo systemctl start gunicorn
+# sudo systemctl enable gunicorn
+# crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
@@ -44,6 +43,7 @@ curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
 echo "Done installing helm"
 
 # get source code, we clone in in home dir so we can easilly update in place
+sudo yum install git -y
 cd ~
 ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
@@ -123,9 +123,9 @@ kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=TokenLifetime='00:01:00' \
 	--from-literal=EncryptionSecret='12345678901234567890123456789012' \
 	--from-literal=ManagementUIEndpoint='http://management-ui:8080' \
-	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
+	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080' || true
 
-cd ..
+cd ~
 
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
@@ -136,7 +136,7 @@ helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONI
 
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
-printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
+printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd $USER
 sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-sudo service ssh restart
+sudo service sshd restart
 

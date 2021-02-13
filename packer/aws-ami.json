@@ -10,7 +10,7 @@
         "instance_type": "t3.large",
         "region": "{{user `region`}}",
         "secret_key": "{{user `aws_secret_key`}}",
-        "ssh_username": "ubuntu",
+        "ssh_username": "centos",
         "ssh_timeout": "20m",
         "type": "amazon-ebs",
         "ami_regions": "{{user `extra_regions`}}",
@@ -18,14 +18,14 @@
         "source_ami_filter": {
             "filters": {
             "virtualization-type": "hvm",
-            "name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*",
+            "name": "CentOS 7.9.2009 x86_64",
             "root-device-type": "ebs"
             },
-            "owners": ["099720109477"],
+            "owners": ["125523088429"],
             "most_recent": true
          },
         "tags": {
-            "OS_Version": "Ubuntu-20.04",
+            "OS_Version": "CentOS 7.9.2009 x86_64",
             "Base_AMI_Name": "{{ .SourceAMIName }}",
             "Name": "{{user `vm_name`}}"
         },
@@ -46,10 +46,6 @@
       }
     ],
       "provisioners": [
-        {
-            "type": "shell",
-            "script": "./scripts/config/init-config.sh"
-        },
         {
             "type": "file",
             "source":"../scripts/agent",
@@ -95,7 +91,7 @@
         {
             "type": "shell-local",
             "script": "ova-check.sh",
-            "environment_vars": ["OVA_NAME=icap-server-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"]
+            "environment_vars": ["OVA_NAME=icap-server-centos-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"]
         }
     ]
 }
