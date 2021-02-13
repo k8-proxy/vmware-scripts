@@ -1,21 +1,19 @@
 #!/bin/bash
 # defining vars
-DEBIAN_FRONTEND=noninteractive
 KERNEL_BOOT_LINE='net.ifnames=0 biosdevname=0'
 
 # sudo without password prompt
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER >/dev/null
 
 # update packages
-sudo apt update -y && sudo apt upgrade -y
+sudo yum update -y
 
 # cloning vmware scripts repo
-git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
-sudo apt update -y && sudo apt upgrade -y
-sleep 10s
+git clone --single-branch -b centos7_based https://github.com/k8-proxy/vmware-scripts.git  ~/scripts
 
 # install needed packages
-sudo apt install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban
+sudo yum install epel-release -y
+sudo yum install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban wget
 sudo systemctl enable fail2ban.service
 sudo tee -a /etc/fail2ban/jail.d/sshd.conf << EOF > /dev/null
 [sshd]
@@ -36,7 +34,7 @@ grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -Ei "s/GRUB_CM
 sudo swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab && echo Swap removed
 
 # update grub
-sudo update-grub
+# sudo update-grub
 
 # installing the wizard
 sudo install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
