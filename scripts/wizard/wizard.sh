@@ -4,7 +4,7 @@ DIALOG_OPTS="--ascii-lines --clear --output-fd 1 --input-fd 2"
 
 function install_dialog () {
 echo "Installing dialog."
-sudo apt install -y dialog 2>/dev/null
+sudo yum install -y dialog 2>/dev/null
 echo "Dialog successfully installed"
 sleep 1
 }
