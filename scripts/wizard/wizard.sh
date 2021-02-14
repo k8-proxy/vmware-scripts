@@ -10,7 +10,7 @@ sleep 1
 }
 
 function main_dialog () {
-choice=$( dialog $DIALOG_OPTS --menu Wizard -1 -1 5 1 'Configure network' 2 'Change password' )
+choice=$( dialog $DIALOG_OPTS --menu Wizard -1 0 5 1 'Configure network' 2 'Change password' )
 case "$choice" in
    1)
       choice=$( network_dialog )
