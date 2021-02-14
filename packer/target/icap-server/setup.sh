@@ -43,7 +43,6 @@ curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
 echo "Done installing helm"
 
 # get source code, we clone in in home dir so we can easilly update in place
-sudo yum install git -y
 cd ~
 ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
