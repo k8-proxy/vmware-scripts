@@ -38,32 +38,43 @@ dialog $DIALOG_OPTS --ok-label "Submit" \
 }
 
 function configure_network () {
-read ip
+read fullip
 read gw
 read dns
-[ -z $ip  ] && return
+[ -z $fullip  ] && return
 [ -z $gw  ] && return
 [ -z $dns ] && return
-if [ "$(ls /etc/netplan/*.yaml /etc/netplan/*.yml 2>/dev/null |  tail -n1 | wc -l)" != 0 ] ; then
-[ -d /etc/netplan.backup ] || sudo mkdir -p /etc/netplan.backup
-sudo mv /etc/netplan/*.yaml /etc/netplan.backup 2>/dev/null || true
-sudo mv /etc/netplan/*.yml /etc/netplan.backup 2>/dev/null || true
-fi
+ip=$(echo $fullip | cut -d"/" -f1 )
+prefix=$(echo $fullip | cut -d"/" -f2 )
+
 ifname=`ip l | awk '/^[1-9]/ {sub(":","",$2);if ($2=="lo") next; print $2;nextfile}'`
-sudo tee /etc/netplan/$(date +%F-%H_%M).yaml <<EOF >/dev/null
-network:
-  version: 2
-  ethernets:
-    $ifname:
-      addresses:
-      - $ip
-      nameservers:
-        addresses:
-        - $dns
-      gateway4: $gw
-      dhcp4: false
+mac_add=$(ifconfig $ifname | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
+sudo tee /etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF >/dev/null
+# Created by cloud-init on instance boot automatically, do not edit.
+#
+NM_CONTROLLED=no
+BOOTPROTO=none
+DEVICE=$ifname
+HWADDR=$mac_add
+ONBOOT=yes
+STARTMODE=auto
+TYPE=Ethernet
+USERCTL=no
+NETMASK=255.255.255.0
+IPADDR=$ip
+PREFIX=$prefix
+GATEWAY=$gw
+DNS1=$dns
+IPV6INIT=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+UUID=a5855473-efea-4ef4-a414-f350e677276
+NAME=$ifname
 EOF
-sudo netplan generate 2>/dev/null && sudo netplan apply  2>/dev/null || errorbox "Configuration error"
+sudo tee -a /etc/resolv.conf <<EOF
+NAMESERVER 8.8.8.8
+EOF
+sudo systemctl restart network  2>/dev/null || errorbox "Configuration error"
 }
 
 function errorbox () {

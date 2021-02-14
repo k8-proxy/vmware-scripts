@@ -47,6 +47,10 @@
     ],
       "provisioners": [
         {
+          "type": "shell",
+          "script": "./scripts/config/init-config.sh"
+        },
+        {
             "type": "file",
             "source":"./setup",
             "destination":"/tmp/"
