@@ -1,4 +1,5 @@
 #!/bin/bash
+set -v 
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
@@ -17,19 +18,12 @@ echo "Done installing helm"
 git clone https://github.com/k8-proxy/k8-rebuild.git --recursive && cd k8-rebuild && git submodule update --init --recursive && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api && git pull origin main && pushd libs/ && git pull origin master && popd && popd
 
 # build docker images
-sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common -y
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
 
 # install local docker registry
 sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
