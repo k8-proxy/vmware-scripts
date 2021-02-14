@@ -24,6 +24,7 @@ sudo yum-config-manager \
     https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install -y docker-ce docker-ce-cli containerd.io
 sudo systemctl start docker
+sudo systemctl enable docker
 
 # install local docker registry
 sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
