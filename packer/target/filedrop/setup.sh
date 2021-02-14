@@ -2,8 +2,10 @@
 set -v 
 
 # install k3s
+sudo iptables --flush
+sudo iptables -tnat --flush
 curl -sfL https://get.k3s.io | sh -
-mkdir ~/.kube && sudo install -T /etc/rancher/k3s/k3s.yaml ~/.kube/config -m 600 -o $USER
+mkdir -p ~/.kube && sudo install -T /etc/rancher/k3s/k3s.yaml ~/.kube/config -m 600 -o $USER
 
 # install kubectl and helm
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -15,7 +17,7 @@ curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
 echo "Done installing helm"
 
 # get source code
-git clone https://github.com/k8-proxy/k8-rebuild.git --recursive && cd k8-rebuild && git submodule update --init --recursive && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api && git pull origin main && pushd libs/ && git pull origin master && popd && popd
+git clone https://github.com/k8-proxy/k8-rebuild.git --recursive && cd k8-rebuild && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api/libs/ && git pull origin master && popd
 
 # build docker images
 sudo yum install -y yum-utils
