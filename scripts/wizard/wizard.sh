@@ -75,6 +75,7 @@ sudo tee -a /etc/resolv.conf <<EOF
 NAMESERVER 8.8.8.8
 EOF
 sudo systemctl restart network  2>/dev/null || errorbox "Configuration error"
+sudo /home/centos/flush_iptables.sh
 }
 
 function errorbox () {
