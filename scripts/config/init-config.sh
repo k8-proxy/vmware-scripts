@@ -31,7 +31,7 @@ git clone --single-branch -b centos7_based https://github.com/k8-proxy/vmware-sc
 grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -Ei "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 $KERNEL_BOOT_LINE\"/g" /etc/default/grub
 
 # allow password authentication
-sudo sed -Ei "s|ssh_pwauth:(.*)|ssh_pwauth: true|g" /etc/cloud/cloud.cfg
+sudo sed -Ei "s|ssh_pwauth:(.*)|ssh_pwauth: unchanged|g" /etc/cloud/cloud.cfg
 
 # remove swap 
 sudo swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab && echo Swap removed
