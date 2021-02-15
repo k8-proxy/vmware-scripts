@@ -30,8 +30,10 @@ fi
 # crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
 
 # install k3s
-sudo iptables --flush
-sudo iptables -tnat --flush
+if [ -f ./flush_ip.sh ] ; then
+chmod +x ./flush_ip.sh
+./flush_ip.sh
+fi
 curl -sfL https://get.k3s.io | sh -
 mkdir -p ~/.kube && sudo install -T /etc/rancher/k3s/k3s.yaml ~/.kube/config -m 600 -o $USER
 
