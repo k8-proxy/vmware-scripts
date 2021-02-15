@@ -24,7 +24,8 @@ curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
 echo "Done installing helm"
 
 # get source code
-git clone https://github.com/k8-proxy/k8-rebuild.git --recursive && cd k8-rebuild && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api/libs/ && git pull origin master && popd
+BRANCH=${BRANCH:-update_ui}
+git clone https://github.com/k8-proxy/k8-rebuild.git --branch $BRANCH --recursive && cd k8-rebuild && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api/libs/ && git pull origin master && popd
 
 # build docker images
 sudo yum install -y yum-utils
