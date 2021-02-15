@@ -1,6 +1,11 @@
 #!/bin/bash
 set -v 
 
+pushd $( dirname $0 )
+if [ -f ./env ] ; then
+source ./env
+fi
+
 # install k3s
 if [ -f ./flush_ip.sh ] ; then
 chmod +x ./flush_ip.sh
