@@ -11,3 +11,5 @@ sudo journalctl --rotate && sudo journalctl --vacuum-size=1
 sudo rm -f /etc/netplan/*.yml /etc/netplan/*.yaml
 # Shell history clean up
 history -c && history -w
+# remove HWADDR from network config file
+sudo sed -i "/HWADDR=.*/d" /etc/sysconfig/network-scripts/ifcfg-eth0
