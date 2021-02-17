@@ -56,14 +56,6 @@
             "destination":"/tmp/"
         },
         {
-            "type": "shell",
-            "inline": [
-                "chmod +x /tmp/agent/fluentbit.sh",
-                "cd /tmp/agent",
-                "./fluentbit.sh {{user `elastic_host`}} {{user `elastic_port`}} {{user `elastic_user`}} {{user `elastic_password`}}"
-            ]
-        },
-        {
             "type": "file",
             "source":"./setup",
             "destination":"/tmp/"
