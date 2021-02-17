@@ -114,6 +114,7 @@ pushd administration
 helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 popd
 
+kubectl delete secret/smtpsecret -n management-ui
 kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
 	--from-literal=SmtpPort=$SMTPPORT \
