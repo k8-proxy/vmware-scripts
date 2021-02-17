@@ -126,8 +126,8 @@ write_files:
     kubectl set image deployment/event-submission-service -n icap-adaptation event-submission-service=${image_event_submission_service} --record
     kubectl set image deployment/glasswall-icap-adaptation-event-api -n icap-adaptation icap-adaptation=${image_glasswall_icap_adaptation_event_api} --record
     kubectl set image deployment/mvp-icap-service -n icap-adaptation mvp-icap-service=${image_mvp_icap_service} --record
-    kubectl set image deployment/policy-update-service -n icap-adaptation policy-update-service=${PolicyUpdateServiceImage} --record
-    kubectl set env deployment/adaptation-service -n icap-adaptation REQUEST_PROCESSING_IMAGE=${IcapRequestProcessingImage}
+    kubectl set image deployment/policy-update-service -n icap-adaptation policy-update-service=${image_policy_update_service} --record
+    kubectl set env deployment/adaptation-service -n icap-adaptation REQUEST_PROCESSING_IMAGE=${image_icap_request_processing}
 
     while [ ! -d /mnt/disks/prometheus-db ]; do sleep 10; done
     chown -R 1000:1000 /mnt/disks/prometheus-db
