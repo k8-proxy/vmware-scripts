@@ -4,6 +4,7 @@ cat > /home/centos/flush_iptables.sh <<EOF
 #!/bin/bash
 sudo iptables --flush
 sudo iptables -tnat --flush
+sudo sed -i "s/127.0.0.1 /127.0.0.1 $(hostname) /g" /etc/hosts
 EOF
 chmod +x /home/centos/flush_iptables.sh
 /home/centos/flush_iptables.sh
