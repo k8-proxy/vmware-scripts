@@ -10,6 +10,8 @@ sudo yum update -y
 
 # install needed packages
 sudo yum install epel-release -y
+sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq
+sudo chmod +x /usr/bin/yq
 sudo yum install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban wget
 sudo systemctl enable fail2ban.service
 sudo tee -a /etc/fail2ban/jail.d/sshd.conf << EOF > /dev/null
@@ -31,8 +33,14 @@ git clone --single-branch -b centos7_based https://github.com/k8-proxy/vmware-sc
 grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -Ei "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 $KERNEL_BOOT_LINE\"/g" /etc/default/grub
 
 # allow password authentication
-# sudo sed -Ei "s|ssh_pwauth:(.*)|ssh_pwauth: unchanged|g" /etc/cloud/cloud.cfg
-sudo touch /etc/cloud/cloud-init.disabled
+if [ -f /tmp/setup/env ] ; then
+source /tmp/setup/env
+fi
+SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
+sudo sed -Ei "s|ssh_pwauth:(.*)|ssh_pwauth: true|g" /etc/cloud/cloud.cfg
+sudo sed -Ei "s|lock_passwd:(.*)|lock_passwd: false|g" /etc/cloud/cloud.cfg
+sudo yq w -i /etc/cloud/cloud.yaml system_info.default_user.plain_text_passwd $SSH_PASSWORD
+# sudo touch /etc/cloud/cloud-init.disabled
 
 # remove swap 
 sudo swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab && echo Swap removed
