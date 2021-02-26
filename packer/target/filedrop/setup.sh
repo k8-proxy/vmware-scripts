@@ -25,7 +25,7 @@ echo "Done installing helm"
 
 # get source code
 BRANCH=${BRANCH:-sow_version}
-git clone https://github.com/k8-proxy/k8-rebuild.git --branch $BRANCH --recursive && cd k8-rebuild && git submodule foreach git pull origin main && pushd k8-rebuild-rest-api/libs/ && git pull origin master && popd
+git clone https://github.com/k8-proxy/k8-rebuild.git --branch $BRANCH --recursive && cd k8-rebuild && rm -rf k8-rebuild-rest-api/libs/* && cp -r /tmp/sdk-rebuild* k8-rebuild-rest-api/libs/
 
 # build docker images
 sudo yum install -y yum-utils
