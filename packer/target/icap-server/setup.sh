@@ -132,7 +132,7 @@ git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
 helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP --set monitoring.elasticsearch.username=$MONITORING_USER --set monitoring.elasticsearch.password=$MONITORING_PASSWORD
 
 # wait until the pods are up
-sleep 120s
+sleep 300s
 
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
