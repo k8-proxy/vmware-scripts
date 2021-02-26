@@ -4,30 +4,16 @@ if [ -f ./env ] ; then
 source ./env
 fi
 
-# install wizard to setup network (for OVA)
-# if [ -f ./update_partition_size.sh ] ; then
-# chmod +x ./update_partition_size.sh
-# ./update_partition_size.sh
-# fi
+# install docker
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
 
-# Integrate Instance based healthcheck
-# sudo apt update -y
-# sudo apt install c-icap -y
-# cp -r healthcheck ~
-# chmod +x ~/healthcheck/healthcheck.sh
-# sudo apt install python3-pip -y
-# export PATH=$PATH:$HOME/.local/bin
-# pip3 install fastapi
-# pip3 install uvicorn
-# pip3 install uvloop
-# pip3 install httptools
-# pip3 install requests
-# pip3 install aiofiles
-# sudo apt install gunicorn -y
-# sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
-# sudo systemctl start gunicorn
-# sudo systemctl enable gunicorn
-# crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+# install local docker registry
+# sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
 # install k3s
 if [ -f ./flush_ip.sh ] ; then
@@ -58,6 +44,15 @@ cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
 cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
 
+# pull docker images
+sudo docker pull rancher/pause:3.1
+cd ~/icap-infrastructure
+request_processing_repo="glasswallsolutions/icap-request-processing"
+request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
+echo "using $request_processing_tag for icap-request-processing"
+sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+sudo docker pull $request_processing_repo:$request_processing_tag
+
 # Admin ui default credentials
 sudo mkdir -p /var/local/rancher/host/c/userstore
 sudo cp -r default-user/* /var/local/rancher/host/c/userstore/
@@ -74,6 +69,7 @@ kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-email=$DOCKER_EMAIL
 
 # Setup rabbitMQ
+helm -nicap-adaptation delete rabbitmq
 pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
 
 # Setup icap-server
