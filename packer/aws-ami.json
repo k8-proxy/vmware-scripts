@@ -56,6 +56,11 @@
           "script": "./scripts/config/init-config.sh"
         },
         {
+          "type": "file",
+          "source":"../../sdk-rebuild",
+          "destination":"/tmp/"
+        },
+          {
             "type": "shell",
             "inline": [
                 "chmod +x /tmp/setup/setup.sh",
