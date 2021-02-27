@@ -52,7 +52,7 @@ cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
 cd ~/icap-infrastructure
 request_processing_repo="glasswallsolutions/icap-request-processing"
 request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
-echo "using $request_processing_tag for icap-request-processing"
+echo "using $request_processing_repo:$request_processing_tag for icap-request-processing"
 # sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 # sudo docker pull $request_processing_repo:$request_processing_tag
 # sudo docker tag $request_processing_repo:$request_processing_tag localhost:5000/$request_processing_repo:$request_processing_tag
@@ -76,8 +76,8 @@ kubectl create -n icap-adaptation secret docker-registry regcred \
 
 n=0; until ((n >= 60)); do kubectl -n icap-adaptation get serviceaccount default -o name && break; n=$((n + 1)); sleep 1; done; ((n < 60))
 kubectl run rebuild -n icap-adaptation -i --restart=Never --rm \
- --image $request_processing_repo:$request_processing_tag \
- --overrides='{ "spec": { "template": { "spec": { "imagePullSecrets": [{"name": "regcred"}] } } } }' -- sh 
+ --image $request_processing_repo:$request_processing_tag --pod-running-timeout 5m\
+ --overrides='{ "spec": { "imagePullSecrets": [{"name": "regcred"}] } }' -- sh
 
 # Setup rabbitMQ
 helm -nicap-adaptation delete rabbitmq
