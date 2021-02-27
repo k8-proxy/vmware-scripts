@@ -5,15 +5,15 @@ source ./env
 fi
 
 # install docker
-sudo yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum install -y docker-ce docker-ce-cli containerd.io
-sudo systemctl start docker
-sudo systemctl enable docker
+# sudo yum-config-manager \
+#     --add-repo \
+#     https://download.docker.com/linux/centos/docker-ce.repo
+# sudo yum install -y docker-ce docker-ce-cli containerd.io
+# sudo systemctl start docker
+# sudo systemctl enable docker
 
 # install local docker registry
-sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
+# sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
 
 # install k3s
 if [ -f ./flush_ip.sh ] ; then
@@ -45,15 +45,15 @@ cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
 
 # pull docker images
-sudo docker pull rancher/pause:3.1
+# sudo docker pull rancher/pause:3.1
 cd ~/icap-infrastructure
 request_processing_repo="glasswallsolutions/icap-request-processing"
 request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
 echo "using $request_processing_tag for icap-request-processing"
-sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-sudo docker pull $request_processing_repo:$request_processing_tag
-sudo docker push localhost:5000/$request_processing_repo:$request_processing_tag
-yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:5000
+# sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+# sudo docker pull $request_processing_repo:$request_processing_tag
+# sudo docker push localhost:5000/$request_processing_repo:$request_processing_tag
+# yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:5000
 
 # Admin ui default credentials
 sudo mkdir -p /var/local/rancher/host/c/userstore
@@ -69,6 +69,10 @@ kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-username=$DOCKER_USERNAME \
 	--docker-password=$DOCKER_PASSWORD \
 	--docker-email=$DOCKER_EMAIL
+
+kubectl run rebuild -n icap-adaptation -i --restart=Never --rm \
+ --image $request_processing_repo:$request_processing_tag \
+ --overrides='{ "spec": { "template": { "spec": { "imagePullSecrets": [{"name": "regcred"}] } } } }' -- sh 
 
 # Setup rabbitMQ
 helm -nicap-adaptation delete rabbitmq
