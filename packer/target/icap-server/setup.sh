@@ -14,7 +14,7 @@ fi
 
 # install local docker registry
 # sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
-# sudo hostnamectl set-hostname icap-server
+sudo hostnamectl set-hostname icap-server
 sudo tee -a /etc/hosts << EOF
 127.0.0.1 icap-server
 EOF
