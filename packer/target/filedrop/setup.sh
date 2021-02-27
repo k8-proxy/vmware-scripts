@@ -29,6 +29,7 @@ git clone https://github.com/k8-proxy/k8-rebuild.git --branch $BRANCH --recursiv
 cd k8-rebuild
 rm -rf k8-rebuild-rest-api/libs/*
 cp -r /tmp/sdk-rebuild* k8-rebuild-rest-api/libs/
+echo "SDK updated"
 
 # build docker images
 sudo yum install -y yum-utils
