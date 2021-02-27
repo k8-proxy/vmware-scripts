@@ -74,6 +74,7 @@ kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-password=$DOCKER_PASSWORD \
 	--docker-email=$DOCKER_EMAIL
 
+n=0; until ((n >= 60)); do kubectl -n icap-adaptation get serviceaccount default -o name && break; n=$((n + 1)); sleep 1; done; ((n < 60))
 kubectl run rebuild -n icap-adaptation -i --restart=Never --rm \
  --image $request_processing_repo:$request_processing_tag \
  --overrides='{ "spec": { "template": { "spec": { "imagePullSecrets": [{"name": "regcred"}] } } } }' -- sh 
