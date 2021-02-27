@@ -13,7 +13,7 @@ sudo systemctl start docker
 sudo systemctl enable docker
 
 # install local docker registry
-# sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
+sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
 
 # install k3s
 if [ -f ./flush_ip.sh ] ; then
@@ -52,6 +52,8 @@ request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestproce
 echo "using $request_processing_tag for icap-request-processing"
 sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 sudo docker pull $request_processing_repo:$request_processing_tag
+sudo docker push localhost:5000/$request_processing_repo:$request_processing_tag
+yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:5000
 
 # Admin ui default credentials
 sudo mkdir -p /var/local/rancher/host/c/userstore
