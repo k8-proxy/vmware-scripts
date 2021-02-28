@@ -13,11 +13,13 @@ sudo tee -a /etc/systemd/system/flush_iptables.service <<EOF
  [Unit]
 Description=Flush iptables
 After=network.target
+
 [Service]
 Type=simple
 User=centos
 ExecStart=/home/centos/flush_iptables.sh
 RemainAfterExit=yes
+
 [Install]
 WantedBy=k3s.service
 EOF
