@@ -39,7 +39,10 @@ fi
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 sudo sed -Ei "s|ssh_pwauth:(.*)|ssh_pwauth: true|g" /etc/cloud/cloud.cfg
 sudo sed -Ei "s|lock_passwd:(.*)|lock_passwd: false|g" /etc/cloud/cloud.cfg
-sudo yq w -i /etc/cloud/cloud.yaml system_info.default_user.plain_text_passwd $SSH_PASSWORD
+sudo yq w -i /etc/cloud/cloud.cfg system_info.default_user.plain_text_passwd $SSH_PASSWORD
+sudo tee -a /etc/cloud/cloud.cfg <<EOF
+preserve_hostname: true
+EOF
 # sudo touch /etc/cloud/cloud-init.disabled
 
 # remove swap 
