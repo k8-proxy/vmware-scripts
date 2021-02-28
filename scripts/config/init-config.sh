@@ -10,10 +10,9 @@ sudo yum update -y
 
 # install needed packages
 sudo yum install epel-release -y
-sudo yum install wget -y
+sudo yum install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban wget
 sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq
 sudo chmod +x /usr/bin/yq
-sudo yum install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban wget
 sudo systemctl enable fail2ban.service
 sudo tee -a /etc/fail2ban/jail.d/sshd.conf << EOF > /dev/null
 [sshd]
