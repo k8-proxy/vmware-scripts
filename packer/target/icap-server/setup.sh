@@ -79,6 +79,9 @@ kubectl run rebuild -n icap-adaptation -i --restart=Never --rm \
  --image $request_processing_repo:$request_processing_tag --pod-running-timeout 5m\
  --overrides='{ "spec": { "imagePullSecrets": [{"name": "regcred"}] } }' -- sh
 
+kubectl run fluent-bit -n logging --restart=Never --image fluent/fluent-bit:3.2 -- sh
+kubectl delete pod fluent-bit -n logging
+
 # Setup rabbitMQ
 helm -nicap-adaptation delete rabbitmq
 pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
