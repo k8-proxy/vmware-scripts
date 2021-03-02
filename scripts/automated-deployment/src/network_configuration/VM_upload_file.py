@@ -11,6 +11,7 @@ import os
 
 from .get_vm_info import GetVMInfo
 from k8_vmware.vsphere.Sdk import Sdk
+from automated-deployment.config import Config
 
 
 def get_args():
@@ -58,23 +59,25 @@ class VMUploadFile:
         
         self.sdk = Sdk()
 
+        self.__config = Config()
+
         # path of file to upload
         self.host_file_path = os.path.dirname(os.path.realpath(__file__))
 
         # inside vm path to upload to
-        self.vm_path = os.environ.get("VM_UPLOAD_PATH")
+        self.vm_path = self.__config.UPLOAD_PATH_INSIDE_VM
 
         try:
-            self.service_instance = connect.SmartConnectNoSSL(  host=self.args.host,
-                                                                user=self.args.user,
-                                                                pwd=self.args.password,
-                                                                port=self.args.port)
+            self.service_instance = connect.SmartConnectNoSSL( host=self.__config.VSPHERE_HOST,
+                                                               user=self.__config.VSPHERE_USERNAME,
+                                                               pwd=self.__config.VSPHERE_PASSWORD,
+                                                               port=self.__config.PORT)
 
             atexit.register(connect.Disconnect, self.service_instance)
-            print("connected successfully to esxi server %s!" % self.args.host)
+            print("connected successfully to esxi server %s!" % self.__config.VSPHERE_HOST)
         
         except Exception as e:     
-            print("Unable to connect to %s" % self.args.host)
+            print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
             raise e
 
     def get_instance_uuid(self):
@@ -90,8 +93,7 @@ class VMUploadFile:
         instance_uuid = self.get_instance_uuid()
         print("Instance UUID: %s" % instance_uuid)
         
-        upload_file = os.path.join(self.host_file_path, os.environ.get("UPLOAD_FILE_NAME"))
-        self.args.upload_file = upload_file
+        upload_file = os.path.join(self.host_file_path, self.__config.UPLOAD_FILE_NAME)
         print(upload_file)
 
         try:
@@ -109,8 +111,8 @@ class VMUploadFile:
             print("vm2:", vm)
             
             creds = vim.vm.guest.NamePasswordAuthentication(
-                username=self.args.vm_user, password=self.args.vm_pwd)
-            with open(self.args.upload_file, 'rb') as myfile:
+                username=self.__config.VM_USERNAME, password=self.__config.VM_PASSWORD)
+            with open(upload_file, 'rb') as myfile:
                 fileinmemory = myfile.read()
 
             try:
@@ -124,7 +126,7 @@ class VMUploadFile:
                 #            vim/vm/guest/FileManager.rst
                 # Script fails in that case, saying URL has an invalid label.
                 # By having hostname in place will take take care of this.
-                url = re.sub(r"^https://\*:", "https://"+str(self.args.host)+":", url)
+                url = re.sub(r"^https://\*:", "https://"+str(self.__config.VSPHERE_HOST)+":", url)
                 resp = requests.put(url, data=fileinmemory, verify=False)
                 if not resp.status_code == 200:
                     print("Error while uploading file")

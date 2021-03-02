@@ -8,17 +8,7 @@ from pyVmomi import vim
 from pyVim.connect import SmartConnectNoSSL, Disconnect
 
 from ..tools import cli as cli
-
-
-def get_args():
-    parser = cli.build_arg_parser()
-    parser.add_argument('-f', '--find',
-                        required=False,
-                        action='store',
-                        help='String to match VM names')
-    args = parser.parse_args()
-
-    return cli.prompt_for_password(args)
+from automated-deployment.config import Config
 
 
 """ Class to return specified VM info in a dictionary. """
@@ -26,22 +16,23 @@ class GetVMInfo():
     
     def __init__(self):
 
-        self.args = get_args()
-        
+        self.__config = Config()
+        self.vm_to_find = os.environ.get("VM_TO_FIND")
+
         try:
-            self.service_instance = SmartConnectNoSSL(host=self.args.host,
-                                        user=self.args.user,
-                                        pwd=self.args.password,
-                                        port=self.args.port)
+            self.service_instance = SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
+                                                    user=self.__config.VSPHERE_USERNAME,
+                                                    pwd=self.__config.VSPHERE_PASSWORD,
+                                                    port=self.__config.PORT)
 
             atexit.register(Disconnect, self.service_instance)
 
-            print("connected successfully to esxi server %s!" % self.args.host)
+            print("connected successfully to esxi server %s!" % self.__config.HOST)
         
         except Exception as e:
             
-            print("Unable to connect to %s" % self.args.host)
-            raise e
+            print("Unable to connect to %s, with error: %s" % (self.__config.HOST, e))
+            return
 
     def collect_vm_info(self, virtual_machine):
         """
@@ -97,8 +88,6 @@ class GetVMInfo():
         vm_info = GetVMInfo()
         vm_info_data = {}
 
-        self.args.find = os.environ.get("VM_NAME")
-
         try:
         
             content = self.service_instance.RetrieveContent()
@@ -110,10 +99,10 @@ class GetVMInfo():
                 container, viewType, recursive)
 
             children = containerView.view
-            if self.args.find is not None:
-                pat = re.compile(self.args.find, re.IGNORECASE)
+            if self.vm_to_find is not None:
+                pat = re.compile(self.vm_to_find, re.IGNORECASE)
             for child in children:
-                if self.args.find is None:
+                if self.vm_to_find is None:
                     vm_info_data = vm_info.collect_vm_info(child)
                 else:
                     if pat.search(child.summary.config.name) is not None:

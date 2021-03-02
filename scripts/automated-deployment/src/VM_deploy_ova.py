@@ -21,29 +21,29 @@ from pyVmomi import vim, vmodl
 from k8_vmware.vsphere.OVA import OvfHandler, OVA
 from k8_vmware.vsphere.Sdk import Sdk
 
-from automated-deployment.config import Config
+from ..config import Config
 
 
 class VMDeployOVA:
 
     def __init__(self):
         self.sdk = Sdk()
-        self.__vsphere_server_details = Config().vsphere_server_details()
-
+        self.__config = Config()
+    
         # print(self.args.host, args.user, args.password, args.port)
         try:
-            self.si = SmartConnectNoSSL(host=self.__vsphere_server_details.get("host"),
-                                        user=self.__vsphere_server_details.get("username"),
-                                        pwd=self.args.__vsphere_server_details.get("password"),
-                                        port=self.args.port)
+            self.si = SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
+                                        user=self.__config.VSPHERE_USERNAME,
+                                        pwd=self.__config.VSPHERE_PASSWORD,
+                                        port=self.__config.PORT)
 
             atexit.register(Disconnect, self.si)
 
-            print("connected successfully to esxi server %s!" % self.args.host)
+            print("connected successfully to esxi server %s!" % self.__config.VSPHERE_HOST)
         
         except Exception as e:
             
-            print("Unable to connect to %s" % self.args.host)
+            print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
             raise e
 
     @staticmethod
@@ -141,31 +141,31 @@ class VMDeployOVA:
     def deploy(self):
         
         # vm name
-        if self.args.vm_name:
-            vm_name = self.args.vm_name
+        if self.__config.VM_NAME:
+            vm_name = self.__config.VM_NAME
         else:
             vm_name = ""
 
         # get datacenter
-        if self.args.datacenter:
+        if self.__config.DATACENTER:
             dc = self.sdk.datacenter()
         else:
             dc = self.si.content.rootFolder.childEntity[0]
         
         # define datastore
-        if self.args.datastore:
+        if self.__config.DATASTORE:
             ds = self.sdk.datastore()
         else:
             ds = VMDeployOVA.get_largest_free_ds(dc)
 
         # get resource pool from args or get the largest
-        if self.args.resource_pool:
-            rp = get_rp(si, dc, self.args.resource_pool)
+        if self.__config.RESOURCE_POOL:
+            rp = get_rp(si, dc, self.__config.resource_pool)
         else:
             rp = VMDeployOVA.get_largest_free_rp(self.si, dc)
 
         # pass the ova tarball to ovfhandler
-        ovf_handle = OvfHandler(self.args.ova_path)
+        ovf_handle = OvfHandler(self.__config.OVA_PATH)
 
         ovfManager = self.si.content.ovfManager
         # CreateImportSpecParams can specify many useful things such as
@@ -201,7 +201,7 @@ class VMDeployOVA:
         print("ovf_handle:", ovf_handle)
         
         try:
-            ovf_handle.upload_disks(lease, self.args.host)
+            ovf_handle.upload_disks(lease, self.__config.VSPHERE_HOST)
         except Exception as e:
             print("Got exception %s while uploading ova to disk." % e)
             raise e
@@ -211,10 +211,13 @@ class VMDeployOVA:
         # deploy the ova
         self.deploy() 
         # ova = OVA() # TODO: edit k8-vmware upload-ova method with entity name param
-        # ova.upload_ova(self.args.ova_path, vm_name=self.args.vm_name)
+        # ova.upload_ova(self.__config.OVA_PATH, vm_name=self.__config.VM_NAME)
 
         # power on the vm
-        return(self.power_on_vm(self.args.host, self.args.user, self.args.password, self.args.vm_name))
+        return(self.power_on_vm(self.__config.VSPHERE_HOST, 
+                                self.__config.VSPHERE_USER, 
+                                self.__config.VSPHERE_PASSWORD, 
+                                self.__config.VM_NAME))
 
 
 if __name__ == "__main__":
