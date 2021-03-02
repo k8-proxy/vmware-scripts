@@ -209,9 +209,9 @@ class VMDeployOVA:
     def main(self):
 
         # deploy the ova
-        # self.deploy() 
-        ova = OVA() # TODO: edit k8-vmware upload-ova method with entity name param
-        ova.upload_ova(self.args.ova_path, vm_name=self.args.vm_name)
+        self.deploy() 
+        # ova = OVA() # TODO: edit k8-vmware upload-ova method with entity name param
+        # ova.upload_ova(self.args.ova_path, vm_name=self.args.vm_name)
 
         # power on the vm
         return(self.power_on_vm(self.args.host, self.args.user, self.args.password, self.args.vm_name))
