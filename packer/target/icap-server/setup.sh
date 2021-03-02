@@ -109,7 +109,7 @@ pushd adaptation
 kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
-helm upgrade adaptation --values custom-values.yaml --set cicapservice.conf.DebugLevel=7 --install . --namespace icap-adaptation
+helm upgrade adaptation --values custom-values.yaml --set cicapservice.conf.DebugLevel=7 --set icapserviceconfig.processingtimeoutduration="00.10.00" --set prometheus.pushgatewayendpoint="http://127.0.0.1:9090/metrics" --install . --namespace icap-adaptation
 popd
 
 # Setup icap policy management
