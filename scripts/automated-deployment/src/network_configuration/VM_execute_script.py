@@ -11,68 +11,34 @@ from .get_vm_info import GetVMInfo
 
 from k8_vmware.vsphere.VM_Keystroke import VM_Keystroke
 from k8_vmware.vsphere.VM_Screenshot import VM_Screenshot
+from automated-deployment.config import Config
 
-
-def get_args():
-    """Get command line args from the user.
-    """
-
-    parser = cli.build_arg_parser()
-
-    parser.add_argument('-v', '--vm_uuid',
-                        required=False,
-                        action='store',
-                        help='Virtual machine uuid')
-
-    parser.add_argument('-r', '--vm_user',
-                        required=False,
-                        action='store',
-                        help='virtual machine user name')
-
-    parser.add_argument('-w', '--vm_pwd',
-                        required=False,
-                        action='store',
-                        help='virtual machine password')
-
-    parser.add_argument('-l', '--path_to_program',
-                        required=False,
-                        action='store',
-                        help='Path inside VM to the program')
-
-    parser.add_argument('-f', '--program_arguments',
-                        required=False,
-                        action='store',
-                        help='Program command line options')
-
-    args = parser.parse_args()
-
-    cli.prompt_for_password(args)
-    return args
 
 class VMExecuteScript: 
 
     def __init__(self):
 
         self.args = get_args()
-      
+        self.__config = Config()
+
+        # get network config variables
+        self.vm_ip = self.__config.VM_IP
+        self.vm_gateway = self.__config.VM_GATEWAY
+        self.vm_dns = self.__config.VM_DNS
+        self.vm_sudo_pwd = self.__config.VM_SUDO_PASSWORD
+
         try:
-            self.service_instance = connect.SmartConnectNoSSL(  host=self.args.host,
-                                                                user=self.args.user,
-                                                                pwd=self.args.password,
-                                                                port=self.args.port)
+            self.service_instance = connect.SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
+                                                            user=self.__config.VSPHERE_USERNAME,
+                                                            pwd=self.__config.VSPHERE_PASSWORD,
+                                                            port=self.__config.PORT)
 
             atexit.register(connect.Disconnect, self.service_instance)
-            print("connected successfully to esxi server %s!" % self.args.host)
+            print("connected successfully to esxi server %s!" % self.__config.VSPHERE_HOST)
         
         except Exception as e:     
-            print("Unable to connect to %s" % self.args.host)
-            raise e
-        
-        # construct command
-        self.vm_ip = os.environ.get("VM_IP")
-        self.vm_gateway = os.environ.get("VM_GATEWAY")
-        self.vm_dns = os.environ.get("VM_DNS")
-        self.vm_sudo_pwd = os.environ.get("VM_SUDO_PASSWORD")
+            print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
+            return
 
     def get_instance_uuid():
         vm_info_data = GetVMInfo().main()
@@ -90,12 +56,13 @@ class VMExecuteScript:
 
             # convert the bash file from dos to unix
             ps = vim.vm.guest.ProcessManager.ProgramSpec(
-                programPath="/usr/bin/sed",
-                arguments="-i 's/\r$//' /home/glasswall/network.sh"
+                programPath="/usr/bin/sed", #TODO: get these values from config
+                arguments="-i 's/\r$//' %s" % "/home/glasswall/network.sh"
             )
             res = pm.StartProgramInGuest(vm, creds, ps)
 
-            command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
+            command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % 
+                                (self.vm_ip, self.vm_gateway, self.vm_dns)
             res = ks_inst.send_text(command).enter().send_text(self.vm_sudo_pwd).enter()
 
             print("finishing task :%s!" % res)
@@ -156,7 +123,7 @@ class VMExecuteScript:
                     "is running")
 
             creds = vim.vm.guest.NamePasswordAuthentication(
-                username=self.args.vm_user, password=self.args.vm_pwd
+                username=self.__config.VM_USERNAME, password=self.__config.VM_PASSWORD
             )
 
             result = execute_program()
