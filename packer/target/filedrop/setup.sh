@@ -57,9 +57,8 @@ sow-rest-ui:
 EOF
 
 #AWS keys configaration
-#!/bin/bash
-
 cat >> /home/centos/configure_aws_keys.sh <<EOF
+#!/bin/bash
 kubectl set env deployment/sow-rest-api AWS_ACCESS_KEY_ID=$1
 kubectl set env deployment/sow-rest-api AWS_SECRET_ACCESS_KEY=$2
 EOF
