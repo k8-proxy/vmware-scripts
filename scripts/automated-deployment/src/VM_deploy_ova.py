@@ -18,7 +18,8 @@ from pyVim.connect import SmartConnectNoSSL, Disconnect
 from pyVmomi import vim, vmodl
 
 # from .ovf_handler import OvfHandler
-from k8_vmware.vsphere.OVA import OvfHandler, OVA
+from k8_vmware.vsphere.ova_utils.OVA import OVA
+from k8_vmware.vsphere.ova_utils.OVF_Handler import OvfHandler
 from k8_vmware.vsphere.Sdk import Sdk
 
 from ..config import Config
