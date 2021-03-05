@@ -56,7 +56,6 @@ sow-rest-ui:
     tag: latest
 EOF
 
-
 #AWS keys configaration
 
 cat >> /home/centos/configure_aws_keys.sh <<EOF
