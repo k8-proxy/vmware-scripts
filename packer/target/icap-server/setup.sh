@@ -66,6 +66,12 @@ sudo cp -r default-user/* /var/local/rancher/host/c/userstore/
 kubectl create ns icap-adaptation
 kubectl create ns management-ui
 kubectl create ns icap-ncfs
+kubectl create ns minio-operator
+kubectl create ns minio
+
+# Install minio operator
+helm repo add minio https://operator.min.io/
+helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
 
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
@@ -117,17 +123,9 @@ pushd administration
 helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 popd
 
-kubectl delete secret/smtpsecret -n management-ui
-kubectl create -n management-ui secret generic smtpsecret \
-	--from-literal=SmtpHost=$SMTPHOST \
-	--from-literal=SmtpPort=$SMTPPORT \
-	--from-literal=SmtpUser=$SMTPUSER \
-	--from-literal=SmtpPass=$SMTPPASS \
-	--from-literal=TokenSecret='12345678901234567890123456789012' \
-	--from-literal=TokenLifetime='00:01:00' \
-	--from-literal=EncryptionSecret='12345678901234567890123456789012' \
-	--from-literal=ManagementUIEndpoint='http://management-ui:8080' \
-	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080' || true
+pushd minio
+helm upgrade minio-tenant --install . --namespace minio
+popd
 
 cd ~
 
