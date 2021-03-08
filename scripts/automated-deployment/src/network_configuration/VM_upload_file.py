@@ -11,7 +11,7 @@ import os
 
 from .get_vm_info import GetVMInfo
 from k8_vmware.vsphere.Sdk import Sdk
-from automated-deployment.config import Config
+from ...config import Config
 
 
 def get_args():

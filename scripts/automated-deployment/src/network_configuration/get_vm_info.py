@@ -8,7 +8,7 @@ from pyVmomi import vim
 from pyVim.connect import SmartConnectNoSSL, Disconnect
 
 from ..tools import cli as cli
-from automated-deployment.config import Config
+from ...config import Config
 
 
 """ Class to return specified VM info in a dictionary. """
@@ -27,11 +27,11 @@ class GetVMInfo():
 
             atexit.register(Disconnect, self.service_instance)
 
-            print("connected successfully to esxi server %s!" % self.__config.HOST)
+            print("connected successfully to esxi server %s!" % self.__config.VSPHERE_HOST)
         
         except Exception as e:
             
-            print("Unable to connect to %s, with error: %s" % (self.__config.HOST, e))
+            print("Unable to connect to %s, with error: %s" % (self.__config.VSPHERE_HOST, e))
             return
 
     def collect_vm_info(self, virtual_machine):
