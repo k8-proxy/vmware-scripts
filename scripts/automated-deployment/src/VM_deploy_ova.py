@@ -19,7 +19,7 @@ from pyVmomi import vim, vmodl
 
 # from .ovf_handler import OvfHandler
 from k8_vmware.vsphere.ova_utils.OVA import OVA
-from k8_vmware.vsphere.ova_utils.OVF_Handler import OvfHandler
+from k8_vmware.vsphere.ova_utils.OVF_Handler import Ovf_Hanlder
 from k8_vmware.vsphere.Sdk import Sdk
 
 from ..config import Config
@@ -166,7 +166,7 @@ class VMDeployOVA:
             rp = VMDeployOVA.get_largest_free_rp(self.si, dc)
 
         # pass the ova tarball to ovfhandler
-        ovf_handle = OvfHandler(self.__config.OVA_PATH)
+        ovf_handle = Ovf_Handler(self.__config.OVA_PATH)
 
         ovfManager = self.si.content.ovfManager
         # CreateImportSpecParams can specify many useful things such as
@@ -216,7 +216,7 @@ class VMDeployOVA:
 
         # power on the vm
         return(self.power_on_vm(self.__config.VSPHERE_HOST, 
-                                self.__config.VSPHERE_USER, 
+                                self.__config.VSPHERE_USERNAME, 
                                 self.__config.VSPHERE_PASSWORD, 
                                 self.__config.VM_NAME))
 
