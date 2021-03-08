@@ -216,7 +216,7 @@ class VMDeployOVA:
 
         # power on the vm
         return(self.power_on_vm(self.__config.VSPHERE_HOST, 
-                                self.__config.VSPHERE_USER, 
+                                self.__config.VSPHERE_USERNAME, 
                                 self.__config.VSPHERE_PASSWORD, 
                                 self.__config.VM_NAME))
 
