@@ -41,6 +41,7 @@
           {
             "device_name": "/dev/sda1",
             "volume_type": "gp2",
+            "volume_size": 200,
             "delete_on_termination": true
           }
         ]
@@ -86,7 +87,7 @@
         {
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "./bin/ck8s-kubespray apply sc"]
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "cd kubespray", "git checkout v2.14.2", "cd ..", "./bin/ck8s-kubespray apply sc"]
         },
         {
           "type":                 "shell-local",
@@ -96,7 +97,15 @@
         {
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl sc apply -f ../local-storage-pv.yaml"]
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl sc apply -f ../local-storage-pv-sc.yaml"]
+        },
+        {
+          "type":                 "shell",
+          "inline":               ["for i in $(seq 1 8); do sudo mkdir -p /mnt/disks/pv$i/prometheus-db; sudo chown -R 1000:1000 /mnt/disks/pv$i; done"]
+        },
+        {
+          "type":                 "shell",
+          "inline":               ["sudo kubectl patch storageclass local-storage -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"]
         },
         {
           "type":                 "shell-local",
@@ -104,8 +113,14 @@
           "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s apply sc"]
         },
         {
-          "type":                 "shell",
-          "inline":               ["sudo mkdir -p /mnt/disks/", "sudo chown -R 1000:1000 /mnt/disks/"]
+          "type":                 "shell-local",
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
+          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl sc apply -f ../node-port-service-cluster.yaml"]
+        },
+        {
+          "type":                 "shell-local",
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
+          "inline":               ["exit 1"]
         }
     ]
 }
