@@ -7,7 +7,7 @@
       "team_tag":"Elastisys",
       "owner_tag":"jakub@elastisys.com",
 
-      "user_data_file": "cdrom/user-data-aws",
+      "user_data_file": "cdrom/user-data-aws-sc",
 
       "ssh_user":             "ubuntu",
       "ssh_keypair_name":     "packer-glasswall-elastisys-pipeline",
