@@ -116,11 +116,6 @@
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
           "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl sc apply -f ../node-port-service-cluster.yaml"]
-        },
-        {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["exit 1"]
         }
     ]
 }
