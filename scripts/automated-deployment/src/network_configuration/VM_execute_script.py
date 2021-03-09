@@ -11,14 +11,13 @@ from .get_vm_info import GetVMInfo
 
 from k8_vmware.vsphere.VM_Keystroke import VM_Keystroke
 from k8_vmware.vsphere.VM_Screenshot import VM_Screenshot
-from automated-deployment.config import Config
+from ...config import Config
 
 
 class VMExecuteScript: 
 
     def __init__(self):
 
-        self.args = get_args()
         self.__config = Config()
 
         # get network config variables
@@ -40,8 +39,8 @@ class VMExecuteScript:
             print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
             return
 
-    def get_instance_uuid():
-        vm_info_data = GetVMInfo().main()
+    def get_instance_uuid(self):
+        vm_info_data = GetVMInfo(si=self.service_instance).main()
         print(vm_info_data)
         inst_uuid = vm_info_data.get("instance_uuid")
         return inst_uuid
@@ -61,8 +60,7 @@ class VMExecuteScript:
             )
             res = pm.StartProgramInGuest(vm, creds, ps)
 
-            command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % 
-                                (self.vm_ip, self.vm_gateway, self.vm_dns)
+            command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
             res = ks_inst.send_text(command).enter().send_text(self.vm_sudo_pwd).enter()
 
             print("finishing task :%s!" % res)
@@ -95,13 +93,13 @@ class VMExecuteScript:
         except IOError as e:
                 print(e)
 
-    def main():
+    def main(self):
         """
         Simple command-line program for executing a process in the VM without the
         network requirement to actually access it.
         """
 
-        instance_uuid = get_instance_uuid()
+        instance_uuid = self.get_instance_uuid()
         try:
             content = self.service_instance.RetrieveContent()
 
