@@ -8,31 +8,35 @@ from pyVmomi import vim
 from pyVim.connect import SmartConnectNoSSL, Disconnect
 
 from ..tools import cli as cli
-from automated-deployment.config import Config
+from ...config import Config
 
 
 """ Class to return specified VM info in a dictionary. """
 class GetVMInfo():
     
-    def __init__(self):
+    def __init__(self, si=None):
 
         self.__config = Config()
         self.vm_to_find = os.environ.get("VM_TO_FIND")
+        self.service_instance = si or self.get_service_instance()
+
+    def get_service_instance(self):
 
         try:
-            self.service_instance = SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
-                                                    user=self.__config.VSPHERE_USERNAME,
-                                                    pwd=self.__config.VSPHERE_PASSWORD,
-                                                    port=self.__config.PORT)
+            service_instance = SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
+                                                user=self.__config.VSPHERE_USERNAME,
+                                                pwd=self.__config.VSPHERE_PASSWORD,
+                                                port=self.__config.PORT)
 
-            atexit.register(Disconnect, self.service_instance)
+            atexit.register(Disconnect, service_instance)
 
-            print("connected successfully to esxi server %s!" % self.__config.HOST)
-        
+            print("connected successfully to esxi server %s!" % self.__config.VSPHERE_HOST)
+            return service_instance
+
         except Exception as e:
             
-            print("Unable to connect to %s, with error: %s" % (self.__config.HOST, e))
-            return
+            print("Unable to connect to %s, with error: %s" % (self.__config.VSPHERE_HOST, e))
+            raise e
 
     def collect_vm_info(self, virtual_machine):
         """
@@ -84,8 +88,6 @@ class GetVMInfo():
         """
         Simple command-line program for listing the virtual machines on a system.
         """
-
-        vm_info = GetVMInfo()
         vm_info_data = {}
 
         try:
@@ -103,10 +105,10 @@ class GetVMInfo():
                 pat = re.compile(self.vm_to_find, re.IGNORECASE)
             for child in children:
                 if self.vm_to_find is None:
-                    vm_info_data = vm_info.collect_vm_info(child)
+                    vm_info_data = self.collect_vm_info(child)
                 else:
                     if pat.search(child.summary.config.name) is not None:
-                        vm_info_data = vm_info.collect_vm_info(child)
+                        vm_info_data = self.collect_vm_info(child)
 
         except vmodl.MethodFault as error:
             print("Caught vmodl fault : " + error.msg)

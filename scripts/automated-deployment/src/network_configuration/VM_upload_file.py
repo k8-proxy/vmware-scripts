@@ -8,10 +8,11 @@ from pyVim import connect
 from pyVmomi import vim, vmodl
 import re
 import os
+import sys
 
 from .get_vm_info import GetVMInfo
 from k8_vmware.vsphere.Sdk import Sdk
-from automated-deployment.config import Config
+from ...config import Config
 
 
 def get_args():
@@ -106,7 +107,12 @@ class VMUploadFile:
             #                                     vmSearch=True,
             #                                     instanceUuid=True)
             
-            vm = self.sdk.find_by_uuid(instance_uuid).vm
+            try:
+                vm = self.sdk.find_by_uuid(instance_uuid).vm
+
+            except Exception as e:
+                print("Cannot find the VM, got error: %s" % e)
+                sys.exit(1)
 
             print("vm2:", vm)
             
