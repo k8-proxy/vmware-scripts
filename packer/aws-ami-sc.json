@@ -49,10 +49,6 @@
     ],
       "provisioners": [
         {
-          "type":   "shell-local",
-          "inline": ["cd {{ user `ck8s_config_path` }}", "./secrets-generator.sh", "export GNUPGHOME=\"$(mktemp -d)\"", "echo $GNUPGHOME > gnupghome.txt", "./pgp-generator.sh", "sops -i -e secrets.yaml", "sops -i -e sc-config/ssh/id_rsa"]
-        },
-        {
           "type": "shell",
           "inline": [ "sudo apt update", "sudo apt install -y python3-pip", "sudo pip3 install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz" ]
         },
