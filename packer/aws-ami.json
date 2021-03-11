@@ -81,23 +81,23 @@
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "./bin/ck8s-kubespray apply wc"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "./bin/ck8s-kubespray apply wc"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "PRIVATE_IP=$(cat private_ip)", "PUBLIC_IP=$(cat public_ip)", "cd {{ user `ck8s_config_path` }}", "sops -i -d .state/kube_config_wc.yaml", "sed -i 's/'172.17.0.100'/'\"${PUBLIC_IP}\"'/' .state/kube_config_wc.yaml", "sops -i -e .state/kube_config_wc.yaml"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["PRIVATE_IP=$(cat private_ip)", "PUBLIC_IP=$(cat public_ip)", "cd {{ user `ck8s_config_path` }}", "sops -i -d .state/kube_config_wc.yaml", "sed -i 's/'172.17.0.100'/'\"${PUBLIC_IP}\"'/' .state/kube_config_wc.yaml", "sops -i -e .state/kube_config_wc.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl wc apply -f ../local-storage-pv.yaml"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s ops kubectl wc apply -f ../local-storage-pv.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps", "./bin/ck8s apply wc"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["cd ../../compliantkubernetes-apps", "./bin/ck8s apply wc"]
         },
         {
           "type":                 "shell",
@@ -105,28 +105,28 @@
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
         },
         {
           "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}"],
-          "inline":               ["export GNUPGHOME=$(cat {{ user `ck8s_config_path` }}gnupghome.txt)", "cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}"]
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}"]
         }
     ]
 }

@@ -15,5 +15,6 @@
 
       "security_group_id":    "sg-06cc8c1b956fc97c8",
 
-      "ck8s_config_path":     "{{env `GITHUB_WORKSPACE`}}/compliant-k8s-icap-server-pipeline/"
+      "ck8s_config_path":     "{{env `GITHUB_WORKSPACE`}}/compliant-k8s-icap-server-pipeline/",
+      "gnu_pgp_home":         "{{env `GNUPGHOME`}}"
 }
