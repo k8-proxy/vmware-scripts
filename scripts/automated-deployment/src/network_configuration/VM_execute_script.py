@@ -11,6 +11,8 @@ from .get_vm_info import GetVMInfo
 
 from k8_vmware.vsphere.VM_Keystroke import VM_Keystroke
 from k8_vmware.vsphere.VM_Screenshot import VM_Screenshot
+from k8_vmware.vsphere.Sdk import Sdk
+
 from ...config import Config
 
 
@@ -19,6 +21,8 @@ class VMExecuteScript:
     def __init__(self):
 
         self.__config = Config()
+
+        self.sdk = Sdk()
 
         # get network config variables
         self.vm_ip = self.__config.VM_IP
@@ -45,7 +49,7 @@ class VMExecuteScript:
         inst_uuid = vm_info_data.get("instance_uuid")
         return inst_uuid
 
-    def execute_program(self):
+    def execute_program(self, content, vm, creds):
         try:
             # initialize process manager
             pm = content.guestOperationsManager.processManager
@@ -58,7 +62,7 @@ class VMExecuteScript:
                 programPath="/usr/bin/sed", #TODO: get these values from config
                 arguments="-i 's/\r$//' %s" % "/home/glasswall/network.sh"
             )
-            res = pm.StartProgramInGuest(vm, creds, ps)
+            res = pm.StartProgramInGuest(vm.vm, creds, ps)
 
             command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
             res = ks_inst.send_text(command).enter().send_text(self.vm_sudo_pwd).enter()
@@ -104,15 +108,16 @@ class VMExecuteScript:
             content = self.service_instance.RetrieveContent()
 
             # if instanceUuid is false it will search for VM BIOS UUID instead
-            vm = content.searchIndex.FindByUuid(datacenter=None,
-                                                uuid=instance_uuid,
-                                                vmSearch=True,
-                                                instanceUuid=True)
+            # vm = content.searchIndex.FindByUuid(datacenter=None,
+            #                                     uuid=instance_uuid,
+            #                                     vmSearch=True,
+            #                                     instanceUuid=True)
+            vm = self.sdk.find_by_uuid(instance_uuid)
 
             if not vm:
                 raise SystemExit("Unable to locate the virtual machine.")
 
-            tools_status = vm.guest.toolsStatus
+            tools_status = vm.vm.guest.toolsStatus
             if (tools_status == 'toolsNotInstalled' or
                     tools_status == 'toolsNotRunning'):
                 raise SystemExit(
@@ -124,7 +129,8 @@ class VMExecuteScript:
                 username=self.__config.VM_USERNAME, password=self.__config.VM_PASSWORD
             )
 
-            result = execute_program()
+            print(vm.vm)
+            result = self.execute_program(content, vm, creds)
             print("Finished with executing script: %s" % result)
 
         except vmodl.MethodFault as error:

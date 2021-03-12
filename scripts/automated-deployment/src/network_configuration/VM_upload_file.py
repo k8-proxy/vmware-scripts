@@ -109,7 +109,7 @@ class VMUploadFile:
             
             try:
                 vm = self.sdk.find_by_uuid(instance_uuid).vm
-
+                print(vm)
             except Exception as e:
                 print("Cannot find the VM, got error: %s" % e)
                 sys.exit(1)
@@ -119,14 +119,18 @@ class VMUploadFile:
             creds = vim.vm.guest.NamePasswordAuthentication(
                 username=self.__config.VM_USERNAME, password=self.__config.VM_PASSWORD)
             with open(upload_file, 'rb') as myfile:
+                print("myfile:", myfile, upload_file)
                 fileinmemory = myfile.read()
+            print("fileinmemory:", fileinmemory)
 
             try:
                 file_attribute = vim.vm.guest.FileManager.FileAttributes()
+                print("file attribute:", file_attribute)
                 url = content.guestOperationsManager.fileManager. \
                     InitiateFileTransferToGuest(vm, creds, self.vm_path,
                                                 file_attribute,
-                                                len(fileinmemory), True)
+                                                len(fileinmemory), 
+                                                True)
                 # When : host argument becomes https://*:443/guestFile?
                 # Ref: https://github.com/vmware/pyvmomi/blob/master/docs/ \
                 #            vim/vm/guest/FileManager.rst
