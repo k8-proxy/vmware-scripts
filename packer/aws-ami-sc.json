@@ -83,7 +83,7 @@
         {
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               ["echo \"CK8S_CONFIG_PATH=${CK8S_CONFIG_PATH}\"", "cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "cd kubespray", "git checkout v2.14.2", "cd ..", "./bin/ck8s-kubespray apply sc"]
+          "inline":               ["cd ../../compliantkubernetes-kubespray/", "git submodule init", "git submodule update", "cd kubespray", "git checkout v2.15.0", "cd ..", "./bin/ck8s-kubespray apply sc"]
         },
         {
           "type":                 "shell-local",
