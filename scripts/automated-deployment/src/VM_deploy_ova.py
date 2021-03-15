@@ -166,7 +166,7 @@ class VMDeployOVA:
             rp = VMDeployOVA.get_largest_free_rp(self.si, dc)
 
         # pass the ova tarball to ovfhandler
-        ovf_handle = Ovf_Handler(self.__config.OVA_PATH)
+        ovf_handle = Ovf_Hanlder(self.__config.OVA_PATH)
 
         ovfManager = self.si.content.ovfManager
         # CreateImportSpecParams can specify many useful things such as

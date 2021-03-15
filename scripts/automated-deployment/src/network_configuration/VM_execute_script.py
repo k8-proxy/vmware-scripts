@@ -30,6 +30,8 @@ class VMExecuteScript:
         self.vm_dns = self.__config.VM_DNS
         self.vm_sudo_pwd = self.__config.VM_SUDO_PASSWORD
 
+        self.script_to_execute = self.__config.UPLOAD_FILE_NAME
+
         try:
             self.service_instance = connect.SmartConnectNoSSL(host=self.__config.VSPHERE_HOST,
                                                             user=self.__config.VSPHERE_USERNAME,
@@ -58,13 +60,18 @@ class VMExecuteScript:
             ks_inst = VM_Keystroke(vm)
 
             # convert the bash file from dos to unix
+            script_to_execute_path = self.__config.UPLOAD_PATH_INSIDE_VM
             ps = vim.vm.guest.ProcessManager.ProgramSpec(
                 programPath="/usr/bin/sed", #TODO: get these values from config
-                arguments="-i 's/\r$//' %s" % "~/network.sh"
+                arguments="-i 's/\r$//' %s" % script_to_execute_path
             )
             res = pm.StartProgramInGuest(vm.vm, creds, ps)
 
-            command = "/usr/bin/sudo /usr/bin/bash ~/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
+            command = "/usr/bin/sudo /usr/bin/bash %s %s %s %s" % (script_to_execute_path, 
+                                                                    self.vm_ip, 
+                                                                    self.vm_gateway, 
+                                                                    self.vm_dns
+                                                                )
             res = ks_inst.send_text(command).enter().send_text(self.vm_sudo_pwd).enter()
 
             print("finishing task :%s!" % res)
