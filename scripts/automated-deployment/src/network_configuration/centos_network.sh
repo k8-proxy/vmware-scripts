@@ -1,9 +1,11 @@
 #!/bin/bash
 
-IP=$1
+FULLIP=$1
+IP=$(echo $FULLIP | cut -d"/" -f1)
+PREFIX=$(echo $FULLIP | cut -d"/" -f2)
 GATEWAY=$2
 DNS=$3
-ifname=`ip l | awk '/^[1-9]/ {sub(":","",$4);if ($4=="lo") next; print $4;nextfile}'`
+ifname=`ip l | awk '/^[1-9]/ {sub(":","",$2);if ($2=="lo") next; print $2;nextfile}'`
 mac_add=$(ifconfig $ifname | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
 sudo tee /etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF >/dev/null
 
@@ -19,7 +21,7 @@ TYPE=Ethernet
 USERCTL=no
 NETMASK=255.255.255.0
 IPADDR=$IP
-PREFIX=$prefix
+PREFIX=$PREFIX
 GATEWAY=$GATEWAY
 DNS1=$DNS
 IPV6INIT=no

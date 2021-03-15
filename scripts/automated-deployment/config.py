@@ -7,6 +7,8 @@ load_dotenv()
 
 class Config():
 
+    OS_TYPE = os.environ.get("OS_TYPE")
+
     # vsphere server cred
     VSPHERE_HOST     = environ.get('VSPHERE_HOST')
     VSPHERE_USERNAME = environ.get('VSPHERE_USERNAME')
@@ -28,8 +30,12 @@ class Config():
     OVA_PATH = environ.get('OVA_PATH')
 
     # upload file to vm config
-    UPLOAD_PATH_INSIDE_VM = environ.get('VM_UPLOAD_PATH')
-    UPLOAD_FILE_NAME = environ.get('UPLOAD_FILE_NAME')
+    if OS_TYPE == "centos": 
+        UPLOAD_PATH_INSIDE_VM = environ.get('VM_UPLOAD_PATH_CENTOS')
+        UPLOAD_FILE_NAME = environ.get('UPLOAD_FILE_NAME_CENTOS')
+    else:
+        UPLOAD_PATH_INSIDE_VM = environ.get('VM_UPLOAD_PATH_UBUNTU')
+        UPLOAD_FILE_NAME = environ.get('UPLOAD_FILE_NAME_UBUNTU')
 
     # network configuration
     VM_IP            = os.environ.get('VM_IP')
