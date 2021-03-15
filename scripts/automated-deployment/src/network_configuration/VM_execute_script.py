@@ -60,7 +60,7 @@ class VMExecuteScript:
             ks_inst = VM_Keystroke(vm)
 
             # convert the bash file from dos to unix
-            script_to_execute_path = "~/%s" % self.script_to_execute
+            script_to_execute_path = self.__config.UPLOAD_PATH_INSIDE_VM
             ps = vim.vm.guest.ProcessManager.ProgramSpec(
                 programPath="/usr/bin/sed", #TODO: get these values from config
                 arguments="-i 's/\r$//' %s" % script_to_execute_path
