@@ -43,11 +43,11 @@ class VMExecuteScript:
             print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
             return
 
-    def get_instance_uuid(self):
+    def get_bios_uuid(self):
         vm_info_data = GetVMInfo(si=self.service_instance).main()
         print(vm_info_data)
-        inst_uuid = vm_info_data.get("instance_uuid")
-        return inst_uuid
+        bios_uuid = vm_info_data.get("bios_uuid")
+        return bios_uuid
 
     def execute_program(self, content, vm, creds):
         try:
@@ -60,11 +60,11 @@ class VMExecuteScript:
             # convert the bash file from dos to unix
             ps = vim.vm.guest.ProcessManager.ProgramSpec(
                 programPath="/usr/bin/sed", #TODO: get these values from config
-                arguments="-i 's/\r$//' %s" % "/home/glasswall/network.sh"
+                arguments="-i 's/\r$//' %s" % "~/network.sh"
             )
             res = pm.StartProgramInGuest(vm.vm, creds, ps)
 
-            command = "/usr/bin/sudo /usr/bin/bash /home/glasswall/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
+            command = "/usr/bin/sudo /usr/bin/bash ~/network.sh %s %s %s" % (self.vm_ip, self.vm_gateway, self.vm_dns)
             res = ks_inst.send_text(command).enter().send_text(self.vm_sudo_pwd).enter()
 
             print("finishing task :%s!" % res)
@@ -103,16 +103,16 @@ class VMExecuteScript:
         network requirement to actually access it.
         """
 
-        instance_uuid = self.get_instance_uuid()
+        bios_uuid = self.get_bios_uuid()
         try:
             content = self.service_instance.RetrieveContent()
 
             # if instanceUuid is false it will search for VM BIOS UUID instead
             # vm = content.searchIndex.FindByUuid(datacenter=None,
-            #                                     uuid=instance_uuid,
+            #                                     uuid=bios_uuid,
             #                                     vmSearch=True,
             #                                     instanceUuid=True)
-            vm = self.sdk.find_by_uuid(instance_uuid)
+            vm = self.sdk.find_by_uuid(bios_uuid)
 
             if not vm:
                 raise SystemExit("Unable to locate the virtual machine.")

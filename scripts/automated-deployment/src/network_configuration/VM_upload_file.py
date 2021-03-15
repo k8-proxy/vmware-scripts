@@ -81,18 +81,18 @@ class VMUploadFile:
             print("Unable to connect to %s" % self.__config.VSPHERE_HOST)
             raise e
 
-    def get_instance_uuid(self):
-        vm_info_data = GetVMInfo().main()
+    def get_bios_uuid(self):
+        vm_info_data = GetVMInfo(si=self.service_instance).main()
         print(vm_info_data)
-        inst_uuid = vm_info_data.get("instance_uuid")
-        return inst_uuid
+        bios_uuid = vm_info_data.get("bios_uuid")
+        return bios_uuid
 
     def main(self):
         """
         Simple command-line program for Uploading a file from host to guest
         """
-        instance_uuid = self.get_instance_uuid()
-        print("Instance UUID: %s" % instance_uuid)
+        bios_uuid = self.get_bios_uuid()
+        print("Instance UUID: %s" % bios_uuid)
         
         upload_file = os.path.join(self.host_file_path, self.__config.UPLOAD_FILE_NAME)
         print(upload_file)
@@ -103,12 +103,12 @@ class VMUploadFile:
 
             # vm = content.searchIndex.FindByUuid(None, args.vm_uuid, True)
             # vm = content.searchIndex.FindByUuid(datacenter=None,
-            #                                     uuid=instance_uuid,
+            #                                     uuid=bios_uuid,
             #                                     vmSearch=True,
             #                                     instanceUuid=True)
             
             try:
-                vm = self.sdk.find_by_uuid(instance_uuid).vm
+                vm = self.sdk.find_by_uuid(bios_uuid).vm
                 print(vm)
             except Exception as e:
                 print("Cannot find the VM, got error: %s" % e)
