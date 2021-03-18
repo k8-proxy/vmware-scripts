@@ -73,11 +73,11 @@
         },
         {
           "type":                 "shell-local",
-          "inline":               ["sed 's/\\./-/g' private_ip > private_ip_underscore", "PRIVATE_IP=$(cat private_ip_underscore)", "echo \"VM Private IP is: ${PRIVATE_IP} \"", "cd {{ user `ck8s_config_path` }}/wc-config", "sed 's/{PRIVATE_IP}/'\"${PRIVATE_IP}\"'/g' inventory.ini.template > inventory.ini"]
+          "inline":               ["sed 's/\\./-/g' private_ip > private_ip_underscore", "PRIVATE_IP=$(cat private_ip_underscore)", "cd {{ user `ck8s_config_path` }}/wc-config", "sed 's/{PRIVATE_IP}/'\"${PRIVATE_IP}\"'/g' inventory.ini.template > inventory.ini"]
         },
         {
           "type":                 "shell-local",
-          "inline":               ["PUBLIC_IP=$(cat public_ip)", "echo \"VM Public IP is: ${PUBLIC_IP} \"", "cd {{ user `ck8s_config_path` }}/wc-config", "sed -i 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' inventory.ini", "sed 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' group_vars/k8s-cluster/k8s-cluster.yml.template > group_vars/k8s-cluster/k8s-cluster.yml"]
+          "inline":               ["PUBLIC_IP=$(cat public_ip)", "cd {{ user `ck8s_config_path` }}/wc-config", "sed -i 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' inventory.ini", "sed 's/{PUBLIC_IP}/'\"${PUBLIC_IP}\"'/g' group_vars/k8s-cluster/k8s-cluster.yml.template > group_vars/k8s-cluster/k8s-cluster.yml"]
         },
         {
           "type":                 "shell-local",
