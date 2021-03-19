@@ -114,8 +114,8 @@ write_files:
 
     kubectl get cm -n fluentd fluentd-fluentd-elasticsearch -o yaml | sed 's/CLUSTER_NAME/'"${cluster}"'/' | kubectl apply -f -
     kubectl get cm -n kube-system fluentd-system-fluentd-elasticsearch -o yaml | sed 's/CLUSTER_NAME/'"${cluster}"'/' | kubectl apply -f -
-    kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_HOST=elastic.${service_cluster}
-    kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_HOST=elastic.${service_cluster}
+    kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_HOSTS=elastic.${service_cluster}
+    kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_HOSTS=elastic.${service_cluster}
     kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_USER=${logging_username}
     kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_USER=${logging_username}
     cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
