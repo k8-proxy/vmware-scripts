@@ -131,6 +131,11 @@
           "type":                 "shell-local",
           "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
           "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}"]
+        },
+        {
+          "type":                 "shell-local",
+          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
+          "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -n icap-adaptation -f ../../cs-k8s-api/deployment.yaml"]
         }
     ]
 }
