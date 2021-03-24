@@ -65,6 +65,10 @@ write_files:
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
+            yq r user-data.txt glasswall.images.image-proxy-rest-api | tr '\r' '\n' > /home/ubuntu/image-proxy-rest-api.txt
+    docker run --rm \
+            -v /var/lib/cloud/instance:/workdir \
+            mikefarah/yq:3 \
             yq r user-data.txt glasswall.monitoring.username | tr '\r' '\n' > /home/ubuntu/monitoring-username.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
@@ -102,6 +106,7 @@ write_files:
     image_mvp_icap_service=$(cat /home/ubuntu/image-mvp-icap-service.txt)
     image_policy_update_service=$(cat /home/ubuntu/image-policy-update-service.txt)
     image_icap_request_processing=$(cat /home/ubuntu/image-icap-request-processing.txt)
+    image_proxy_rest_api=$(cat /home/ubuntu/image-proxy-rest-api.txt)
 
     chown -R 1000:1000 /mnt/disks/
 
@@ -128,6 +133,7 @@ write_files:
     kubectl set image deployment/mvp-icap-service -n icap-adaptation mvp-icap-service=${image_mvp_icap_service} --record
     kubectl set image deployment/policy-update-service -n icap-adaptation policy-update-service=${image_policy_update_service} --record
     kubectl set env deployment/adaptation-service -n icap-adaptation REQUEST_PROCESSING_IMAGE=${image_icap_request_processing}
+    kubectl set image deployment/proxy-rest-api -n icap-adaptation proxy-rest-api=${image_proxy_rest_api} --record
 
     while [ ! -d /mnt/disks/prometheus-db ]; do sleep 10; done
     chown -R 1000:1000 /mnt/disks/prometheus-db
