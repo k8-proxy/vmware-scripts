@@ -66,12 +66,11 @@ sudo cp -r default-user/* /var/local/rancher/host/c/userstore/
 kubectl create ns icap-adaptation
 kubectl create ns management-ui
 kubectl create ns icap-ncfs
-kubectl create ns minio-operator
 kubectl create ns minio
 
-# Install minio operator
-helm repo add minio https://operator.min.io/
-helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
+# Install minio
+helm repo add minio https://helm.min.io/
+helm install  -n minio --set accessKey=minio,secretKey=$MINIO_SECRET,buckets[0].name=sourcefiles,buckets[0].policy=none,buckets[0].purge=false,buckets[1].name=cleanfiles,buckets[1].policy=none,buckets[1].purge=false,fullnameOverride=minio-endpoint minio/minio --generate-name
 
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
@@ -102,29 +101,38 @@ openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x
 kubectl create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
 
 pushd adaptation
-kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
-kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
-kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
+kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password=$TRANSACTIONS_SECRET
+kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password=$TRANSACTIONS_SECRET
+kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password=$RABBIT_SECRET
 helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
 popd
 
 # Setup icap policy management
 pushd ncfs
-kubectl create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
+kubectl create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password=$TRANSACTIONS_SECRET
 helm upgrade ncfs --values custom-values.yaml --install . --namespace icap-ncfs
 popd
 
 # setup management ui
-kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
-kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
-kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
+kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password=$TRANSACTIONS_SECRET
+kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password=$TRANSACTIONS_SECRET
+kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password=$TRANSACTIONS_SECRET
 
 pushd administration
 helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 popd
 
-pushd minio
-helm upgrade minio-tenant --install . --namespace minio
+cd ~
+
+# deploy new Go services
+git clone https://github.com/k8-proxy/go-k8s-infra.git -b azopat-tmp && cd go-k8s-infra
+
+# Scale the existing adaptation service to 0
+kubectl -n icap-adaptation scale --replicas=0 deployment/adaptation-service
+
+# Apply helm chart to create the services
+pushd services
+helm upgrade servicesv2 --install . --namespace icap-adaptation
 popd
 
 cd ~
