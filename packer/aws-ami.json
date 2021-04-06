@@ -87,7 +87,7 @@
         {
             "type": "shell-local",
             "script": "ova-check.sh",
-            "environment_vars": ["OVA_NAME=icap-server-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"]
+            "environment_vars": ["OVA_NAME=csapiicap-server-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"]
         }
     ]
 }
