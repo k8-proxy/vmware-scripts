@@ -146,7 +146,7 @@ sudo systemctl enable docker
 #Install cs-api to k8icap
 git clone https://github.com/k8-proxy/cs-k8s-api.git
 sudo docker build -t cs-k8s-api --file cs-k8s-api/Dockerfile cs-k8s-api
-sed -i 's|<REPLACE_IMAGE_ID>|cs-k8s-api|' cs-k8s-api/deployment.yaml
+sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
 kubectl apply -f cs-k8s-api/deployment.yaml -n icap-adaptation
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
