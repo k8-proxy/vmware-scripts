@@ -138,7 +138,8 @@
           "inline":               [
             "wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml",
             "sed -i 's|<REPLACE_IMAGE_ID>|{{user `cs_api_image`}}|' deployment.yaml",
-            "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -n icap-adaptation -f deployment.yaml"
+            "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -n icap-adaptation -f deployment.yaml",
+            "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc patch svc proxy-rest-api --type='json' -p '[{\"op\":\"replace\",\"path\":\"/spec/type\",\"value\":\"NodePort\"},{\"op\":\"replace\",\"path\":\"/spec/ports/0/nodePort\",\"value\":8080}]'"
             ]
         },
         {
