@@ -135,19 +135,9 @@
         {
           "type": "shell",
           "inline": [
-              "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
-              "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'",
-              "sudo apt update",
-              "sudo apt-get install docker-ce docker-ce-cli containerd.io",
-              "sudo systemctl start docker",
-              "sudo systemctl enable docker"
-          ]
-        },
-        {
-          "type": "shell",
-          "inline": [
               "git clone https://github.com/k8-proxy/cs-k8s-api.git",
-              "docker build -t cs-k8s-api --file cs-k8s-api/Dockerfile cs-k8s-api"           
+              "sudo docker build -t cs-k8s-api --file cs-k8s-api/Dockerfile cs-k8s-api",
+              "rm -rf cs-k8s-api"           
           ]
         },
         {
@@ -158,6 +148,22 @@
             "sed -i 's|<REPLACE_IMAGE_ID>|cs-k8s-api|' deployment.yaml",
             "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -n icap-adaptation -f deployment.yaml"
             ]
-        }
+        },
+        {
+          "type": "shell-local",
+          "inline_shebang": "/bin/bash",
+          "inline": [
+              "set -e",
+              "CREATE_OVA={{user `create_ova`}}",
+              "if [[ $CREATE_OVA == 'true' ]]; then",
+              "aws ec2 create-instance-export-task --region {{user `region`}} --instance-id {{build `ID`}} --target-environment vmware --export-to-s3-task file://ova-export.json > out.json",
+              "fi"
+          ]
+      },
+      {
+          "type": "shell-local",
+          "script": "ova-check.sh",
+          "environment_vars": ["OVA_NAME={{user `vm_name`}}-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"]
+      }
     ]
 }

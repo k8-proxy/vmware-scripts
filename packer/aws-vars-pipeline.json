@@ -2,10 +2,10 @@
       "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
       "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
       "region": "eu-west-1",
-      "vm_name": "glasswall-compliant-kubernetes-ec2",
+      "vm_name": "ck8-cs-api-CI",
       "github_sha": "{{env `SHA8`}}",
-      "team_tag":"Elastisys",
-      "owner_tag":"jakub@elastisys.com",
+      "team_tag":"K8",
+      "owner_tag":"GithubCK8-CSAPI-CI",
 
       "user_data_file": "cdrom/user-data-aws",
 
