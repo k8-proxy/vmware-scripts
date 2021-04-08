@@ -31,8 +31,8 @@
         },
         "run_tags": {
             "Name": "Packer Builder {{user `vm_name`}}",
-            "Team": "{{user `team_tag`}}",
-            "Owner": "{{user `owner_tag`}}",
+            "Team": "K8",
+            "Owner": "k8icap-csAPI-GithubCI",
             "Scope": "Build AMI",
             "Delete": "No"
         },
