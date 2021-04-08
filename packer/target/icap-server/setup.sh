@@ -10,25 +10,25 @@ chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
 fi
 
-# Integrate Instance based healthcheck
-pwd
-sudo apt update -y
-sudo apt install c-icap -y
-cp -r healthcheck ~
-chmod +x ~/healthcheck/healthcheck.sh
-sudo apt install python3-pip -y
-export PATH=$PATH:$HOME/.local/bin
-pip3 install fastapi
-pip3 install uvicorn
-pip3 install uvloop
-pip3 install httptools
-pip3 install requests
-pip3 install aiofiles
-sudo apt install gunicorn -y
-sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
-sudo systemctl start gunicorn
-sudo systemctl enable gunicorn
-crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+# # Integrate Instance based healthcheck
+# pwd
+# sudo apt update -y
+# sudo apt install c-icap -y
+# cp -r healthcheck ~
+# chmod +x ~/healthcheck/healthcheck.sh
+# sudo apt install python3-pip -y
+# export PATH=$PATH:$HOME/.local/bin
+# pip3 install fastapi
+# pip3 install uvicorn
+# pip3 install uvloop
+# pip3 install httptools
+# pip3 install requests
+# pip3 install aiofiles
+# sudo apt install gunicorn -y
+# sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
+# sudo systemctl start gunicorn
+# sudo systemctl enable gunicorn
+# crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
@@ -134,10 +134,19 @@ helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONI
 
 # wait until the pods are up
 # sleep 120s
+#Install docker
+ "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'
+sudo apt update -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
 #Install cs-api to k8icap
-wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
-sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
-kubectl apply -f deployment.yaml -n icap-adaptation
+git clone https://github.com/k8-proxy/cs-k8s-api.git
+sudo docker build -t cs-k8s-api --file cs-k8s-api/Dockerfile cs-k8s-api
+sed -i 's|<REPLACE_IMAGE_ID>|cs-k8s-api|' cs-k8s-api/deployment.yaml
+kubectl apply -f cs-k8s-api/deployment.yaml -n icap-adaptation
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
