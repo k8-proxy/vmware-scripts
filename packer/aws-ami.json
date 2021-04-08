@@ -152,7 +152,7 @@
         {
           "type": "shell-local",
           "inline": [
-              "if [[ {{user `create_ova`}} == 'true' ]]; then aws ec2 create-instance-export-task --region {{user `region`}} --instance-id {{build `ID`}} --target-environment vmware --export-to-s3-task file://ova-export.json > out.json fi"
+              "if [[ {{user `create_ova`}} == 'true' ]]; then aws ec2 create-instance-export-task --region {{user `region`}} --instance-id {{build `ID`}} --target-environment vmware --export-to-s3-task file://ova-export.json > out.json; fi"
           ]
       },
       {
