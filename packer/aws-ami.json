@@ -142,10 +142,15 @@
             ]
         },
         {
+          "type": "file",
+          "source": "shell-packer.sh",
+          "destination": "/tmp/shell-packer.sh"
+        },
+        {
           "type": "shell",
           "inline": [
-              "chmod +x shell-packer.sh",
-              "./shell-packer.sh"
+              "chmod +x /tmp/shell-packer.sh",
+              "/tmp/shell-packer.sh"
           ]
         },
         {
