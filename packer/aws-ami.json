@@ -166,7 +166,7 @@
       },
       {
           "type": "shell-local",
-          "environment_vars": ["OVA_NAME={{user `vm_name`}}-{{user `github_sha`}}.ova", "VM_NAME={{user `vm_name`}}", "CREATE_OVA={{user `create_ova`}}"],
+          "environment_vars": ["OVA_NAME={{user `vm_name`}}-{{user `github_sha`}}.ova", "VM_NAME=csapi-ck8icap", "CREATE_OVA={{user `create_ova`}}"],
           "inline": [
               "chmod +x ova-check.sh",
               "./ova-check.sh"            
