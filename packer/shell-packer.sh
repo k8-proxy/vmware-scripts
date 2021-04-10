@@ -15,9 +15,8 @@ sudo kubectl create -n management-ui secret generic transactionqueryserviceref -
 sudo kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
 sudo kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-pushd administration
+cd administration
 sudo helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
-popd
 sudo kubectl delete secret/smtpsecret -n management-ui
 sudo kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
