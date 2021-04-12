@@ -113,44 +113,15 @@
           "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -f ../../default-restricted-psp.yaml"]
         },
         {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               ["../../compliantkubernetes-apps/bin/ck8s ops helmfile wc -f ../../wip-helmfile-glasswall-icap.yaml apply"]
-        },
-        {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               ["cd ../../compliantkubernetes-apps/", "openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out certificate.crt -subj \"/C=SE/ST=Vasterbotten/L=Umea/O=Elastisys/OU=Development/CN=ssl.elastisys.org\"", "./bin/ck8s ops kubectl wc create secret tls icap-service-tls-config --namespace icap-adaptation --key tls.key --cert certificate.crt"]
-        },
-        {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc delete service frontend-icap-lb -n icap-adaptation", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1344,\\\"nodePort\\\":1344}]}}'", "./bin/ck8s ops kubectl wc patch service/icap-service -n icap-adaptation -p '{\\\"spec\\\":{\\\"ports\\\":[{\\\"port\\\":1345,\\\"nodePort\\\":1345}]}}'"]
-        },
-        {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               ["cd ../../compliantkubernetes-apps/", "./bin/ck8s ops kubectl wc create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}"]
-        },
-        {
-          "type":                 "shell-local",
-          "environment_vars":     ["CK8S_CONFIG_PATH={{ user `ck8s_config_path` }}", "GNUPGHOME={{ user `gnu_pgp_home` }}"],
-          "inline":               [
-            "wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml",
-            "sed -i 's|<REPLACE_IMAGE_ID>|{{user `cs_api_image`}}|' deployment.yaml",
-            "../../compliantkubernetes-apps/bin/ck8s ops kubectl wc apply -n icap-adaptation -f deployment.yaml"
-            ]
-        },
-        {
           "type": "file",
           "source": "shell-packer.sh",
-          "destination": "/tmp/shell-packer.sh"
+          "destination": "/tmp/packer-icapshell.sh"
         },
         {
           "type": "shell",
           "inline": [
-              "chmod +x /tmp/shell-packer.sh",
-              "/tmp/shell-packer.sh"
+              "chmod +x /tmp/packer-icapshell.sh",
+              "/tmp/packer-icapshell.sh"
           ]
         },
         {
