@@ -2,7 +2,7 @@ if [ -f ./update_partition_size.sh ] ; then
 chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
 fi
-sudo kubectl  create ns icap-adaptation
+#sudo kubectl  create ns icap-adaptation
 sudo kubectl  create ns management-ui
 sudo kubectl  create ns icap-ncfs
 cd rabbitmq
