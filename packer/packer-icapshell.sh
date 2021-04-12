@@ -5,9 +5,10 @@ fi
 sudo kubectl  create ns icap-adaptation
 sudo kubectl  create ns management-ui
 sudo kubectl  create ns icap-ncfs
-pushd rabbitmq
+cd rabbitmq
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 sudo helm upgrade rabbitmq --install . --namespace icap-adaptation 
-popd
+cd ..
 cat >> openssl.cnf <<EOF
 [ req ]
 prompt = no
@@ -23,22 +24,22 @@ emailAddress = admin@glasswall.com
 EOF
 openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x509 -days 365 -out /tmp/certificate.crt
 sudo kubectl  create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
-pushd adaptation
+cd adaptation
 sudo kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 sudo kubectl  create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 sudo kubectl  create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
 sudo helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
-popd
-pushd ncfs
+cd ..
+cd ncfs
 sudo kubectl  create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
 sudo helm upgrade ncfs --values custom-values.yaml --install . --namespace icap-ncfs
-popd
+cd ..
 sudo kubectl  create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
 sudo kubectl  create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
 sudo kubectl  create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
-pushd administration
+cd administration
 sudo helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
-popd
+cd ..
 sudo kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
 	--from-literal=SmtpPort=$SMTPPORT \
@@ -50,6 +51,7 @@ sudo kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=ManagementUIEndpoint='http://management-ui:8080' \
 	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
 wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
+echo $CS_API_IMAGE
 sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
 sudo kubectl  apply -f deployment.yaml -n icap-adaptation
 # allow password login (useful when deployed to esxi)
