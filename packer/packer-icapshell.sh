@@ -1,7 +1,9 @@
-kubectl create ns icap-adaptation
-kubectl create ns management-ui
-kubectl create ns icap-ncfs
-pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
+sudo kubectl  create ns icap-adaptation
+sudo kubectl  create ns management-ui
+sudo kubectl  create ns icap-ncfs
+pushd rabbitmq
+sudo helm upgrade rabbitmq --install . --namespace icap-adaptation 
+popd
 cat >> openssl.cnf <<EOF
 [ req ]
 prompt = no
@@ -16,24 +18,24 @@ CN = icap-server
 emailAddress = admin@glasswall.com
 EOF
 openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x509 -days 365 -out /tmp/certificate.crt
-kubectl create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
+sudo kubectl  create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
 pushd adaptation
-kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
-kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
-kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
-helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
+sudo kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
+sudo kubectl  create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
+sudo kubectl  create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
+sudo helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
 popd
 pushd ncfs
-kubectl create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
-helm upgrade ncfs --values custom-values.yaml --install . --namespace icap-ncfs
+sudo kubectl  create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
+sudo helm upgrade ncfs --values custom-values.yaml --install . --namespace icap-ncfs
 popd
-kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
-kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
-kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
+sudo kubectl  create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
+sudo kubectl  create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
+sudo kubectl  create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 pushd administration
-helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
+sudo helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 popd
-kubectl create -n management-ui secret generic smtpsecret \
+sudo kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
 	--from-literal=SmtpPort=$SMTPPORT \
 	--from-literal=SmtpUser=$SMTPUSER \
@@ -45,7 +47,7 @@ kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
 wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
 sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
-kubectl apply -f deployment.yaml -n icap-adaptation
+sudo kubectl  apply -f deployment.yaml -n icap-adaptation
 # allow password login (useful when deployed to esxi)
 SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | sudo passwd ubuntu
