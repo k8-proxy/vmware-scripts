@@ -6,17 +6,21 @@ sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh
 sudo service sshd restart
 ICAP_BRANCH=k8-main
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
-ICAP_SOW_BRANCH=main
-sudo kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":1346}]'
-git clone https://github.com/filetrust/icap-infrastructure.git -b $ICAP_SOW_BRANCH /tmp/icap-infrastructure-sow
-cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
+# ICAP_SOW_BRANCH=main
+# sudo kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":1346}]'
+# git clone https://github.com/filetrust/icap-infrastructure.git -b $ICAP_SOW_BRANCH /tmp/icap-infrastructure-sow
+# cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 sudo kubectl create ns management-ui
-sudo kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=query-service --from-literal=password='long-password'
-sudo kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
+sudo kubectl create -n management-ui secret generic transactionqueryserviceref --from-literal=username=guest --from-literal=password='guest'
+sudo kubectl create -n management-ui secret generic policyupdateserviceref --from-literal=username=change-me --from-literal=password='change-me'
 sudo kubectl create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+cd ncfs
+sudo kubectl create ns icap-ncfs
+sudo kubectl create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
+helm upgrade ncfs --values custom-values.yaml --install . --namespace icap-ncfs
+cd ..
 cd administration
-sudo helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 sudo kubectl delete secret/smtpsecret -n management-ui
 sudo kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
@@ -28,4 +32,5 @@ sudo kubectl create -n management-ui secret generic smtpsecret \
 	--from-literal=EncryptionSecret='12345678901234567890123456789012' \
 	--from-literal=ManagementUIEndpoint='http://management-ui:8080' \
 	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
+sudo helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 rm -rf /home/ubuntu/icap-infrastructure
