@@ -177,7 +177,7 @@
     },
     {
       "type": "file",
-      "source": "shell-packer.sh",
+      "source": "packer-icapshell.sh",
       "destination": "/tmp/packer-icapshell.sh"
     },
     {
