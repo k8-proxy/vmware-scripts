@@ -70,3 +70,4 @@ sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd
 service ssh restart
 rm -rf /home/ubuntu/icap-infrastructure
 rm /home/ubuntu/packer-icapshell.sh
+rm /home/ubuntu/.env
