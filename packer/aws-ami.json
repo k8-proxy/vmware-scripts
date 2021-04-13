@@ -183,8 +183,11 @@
     {
       "type": "shell",
       "environment_vars": [
-        "SSH_PASSWORD={{user `SSH_PASSWORD`}}",
-        "CS_API_IMAGE={{user `create_ova`}}"
+        "SSH_PASSWORD=$SSH_PASSWORD",
+        "CS_API_IMAGE=$CS_API_IMAGE",
+        "DOCKER_USERNAME=$DOCKER_USERNAME",
+        "DOCKER_PASSWORD=$DOCKER_PASSWORD",
+        "DOCKER_EMAIL=$DOCKER_EMAIL"
       ],
       "inline": [
         "chmod +x /home/ubuntu/packer-icapshell.sh",

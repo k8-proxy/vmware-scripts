@@ -1,9 +1,11 @@
+#source /home/ubuntu/.env
 if [ -f ./update_partition_size.sh ] ; then
 chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
 fi
-ICAP_BRANCH=k8-main
-git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
+git clone https://github.com/k8-proxy/icap-infrastructure.git -b k8-main && cd icap-infrastructure
+mkdir -p /var/local/rancher/host/c/userstore
+cp -r default-user/* /var/local/rancher/host/c/userstore/
 #kubectl  create ns icap-adaptation
 kubectl  create ns management-ui
 kubectl  create ns icap-ncfs
@@ -30,7 +32,10 @@ cd adaptation
 kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl  create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl  create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
+kubectl  create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}
 helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
+kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":8080}]'
+kubectl patch svc frontend-icap-lb -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":1344},{"op":"replace","path":"/spec/ports/1/nodePort","value":1345}]'
 cd ..
 cd ncfs
 kubectl  create -n icap-ncfs secret generic ncfspolicyupdateservicesecret --from-literal=username=policy-update --from-literal=password='long-password'
@@ -40,6 +45,7 @@ kubectl  create -n management-ui secret generic transactionqueryserviceref --fro
 kubectl  create -n management-ui secret generic policyupdateserviceref --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl  create -n management-ui secret generic ncfspolicyupdateserviceref --from-literal=username=policy-update --from-literal=password='long-password'
 cd administration
+sed -i 's|traefik|nginx|' templates/management-ui/ingress.yml
 helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 cd ..
 kubectl  create -n management-ui secret generic smtpsecret \
@@ -61,3 +67,5 @@ SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
 printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | passwd ubuntu
 sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 service ssh restart
+rm -rf /home/ubuntu/icap-infrastructure
+rm /home/ubuntu/packer-icapshell.sh
