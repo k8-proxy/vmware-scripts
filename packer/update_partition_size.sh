@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # increase partition size to maximum disk size
-sudo tee -a /etc/init.d/update_partition <<EOF
+tee -a /etc/init.d/update_partition <<EOF
 #!/bin/bash
 
 ### BEGIN INIT INFO
@@ -16,5 +16,5 @@ sudo tee -a /etc/init.d/update_partition <<EOF
 growpart /dev/sda 1
 resize2fs /dev/sda1
 EOF
-sudo chmod +x /etc/init.d/update_partition
-sudo update-rc.d update_partition defaults
+chmod +x /etc/init.d/update_partition
+update-rc.d update_partition defaults

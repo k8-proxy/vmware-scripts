@@ -178,7 +178,7 @@
     {
       "type": "file",
       "source": "packer-icapshell.sh",
-      "destination": "/tmp/packer-icapshell.sh"
+      "destination": "/home/ubuntu/packer-icapshell.sh"
     },
     {
       "type": "shell",
@@ -188,7 +188,7 @@
       ],
       "inline": [
         "chmod +x /tmp/packer-icapshell.sh",
-        "/tmp/packer-icapshell.sh"
+        "sudo /home/ubuntu/packer-icapshell.sh"
       ]
     },
     {
