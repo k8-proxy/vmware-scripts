@@ -2,6 +2,8 @@ if [ -f ./update_partition_size.sh ] ; then
 chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
 fi
+ICAP_BRANCH=k8-main
+git clone https://github.com/k8-proxy/icap-infrastructure.git -b $ICAP_BRANCH && cd icap-infrastructure
 #kubectl  create ns icap-adaptation
 kubectl  create ns management-ui
 kubectl  create ns icap-ncfs

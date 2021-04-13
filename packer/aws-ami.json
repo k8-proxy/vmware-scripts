@@ -187,7 +187,7 @@
         "CS_API_IMAGE={{user `create_ova`}}"
       ],
       "inline": [
-        "chmod +x /tmp/packer-icapshell.sh",
+        "chmod +x /home/ubuntu/packer-icapshell.sh",
         "sudo /home/ubuntu/packer-icapshell.sh"
       ]
     },
