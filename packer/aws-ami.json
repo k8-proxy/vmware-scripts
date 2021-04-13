@@ -181,14 +181,12 @@
       "destination": "/home/ubuntu/packer-icapshell.sh"
     },
     {
+      "type": "file",
+      "source": ".env",
+      "destination": "/home/ubuntu/.env"
+    },
+    {
       "type": "shell",
-      "environment_vars": [
-        "SSH_PASSWORD=$SSH_PASSWORD",
-        "CS_API_IMAGE=$CS_API_IMAGE",
-        "DOCKER_USERNAME=$DOCKER_USERNAME",
-        "DOCKER_PASSWORD=$DOCKER_PASSWORD",
-        "DOCKER_EMAIL=$DOCKER_EMAIL"
-      ],
       "inline": [
         "chmod +x /home/ubuntu/packer-icapshell.sh",
         "sudo /home/ubuntu/packer-icapshell.sh"

@@ -1,4 +1,4 @@
-#source /home/ubuntu/.env
+source /home/ubuntu/.env
 if [ -f ./update_partition_size.sh ] ; then
 chmod +x ./update_partition_size.sh
 ./update_partition_size.sh
