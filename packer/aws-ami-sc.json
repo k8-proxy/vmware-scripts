@@ -137,8 +137,8 @@
         {
           "type": "shell",
           "inline": [
-            "rm /home/ubuntu/.env",
-            "rm /home/ubuntu/setSshPasswd.sh"
+            "sudo rm /home/ubuntu/.env",
+            "sudo rm /home/ubuntu/setSshPasswd.sh"
           ]
         },
         {

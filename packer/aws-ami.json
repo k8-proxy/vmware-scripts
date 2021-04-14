@@ -207,10 +207,10 @@
     {
       "type": "shell",
       "inline": [
-        "rm -rf /home/ubuntu/icap-infrastructure",
-        "rm /home/ubuntu/packer-icapshell.sh",
-        "rm /home/ubuntu/.env",
-        "rm /home/ubuntu/setSshPasswd.sh"
+        "sudo rm -rf /home/ubuntu/icap-infrastructure",
+        "sudo rm /home/ubuntu/packer-icapshell.sh",
+        "sudo rm /home/ubuntu/.env",
+        "sudo rm /home/ubuntu/setSshPasswd.sh"
       ]
     },
     {
