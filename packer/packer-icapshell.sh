@@ -29,6 +29,11 @@ emailAddress = admin@glasswall.com
 EOF
 openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x509 -days 365 -out /tmp/certificate.crt
 kubectl  create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
+# Clone ICAP SOW Version 
+git clone https://github.com/filetrust/icap-infrastructure.git -b main /tmp/icap-infrastructure-sow
+cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
+cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
+cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
 cd adaptation
 kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl  create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
