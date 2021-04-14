@@ -63,12 +63,3 @@ echo $CS_API_IMAGE
 sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
 kubectl  apply -f deployment.yaml -n icap-adaptation
 kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":8080}]'
-# allow password login (useful when deployed to esxi)
-SSH_PASSWORD=${SSH_PASSWORD:-glasswall}
-echo $SSH_PASSWORD
-printf "${SSH_PASSWORD}\n${SSH_PASSWORD}" | passwd ubuntu
-sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-service ssh restart
-rm -rf /home/ubuntu/icap-infrastructure
-rm /home/ubuntu/packer-icapshell.sh
-rm /home/ubuntu/.env

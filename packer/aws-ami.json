@@ -186,10 +186,31 @@
       "destination": "/home/ubuntu/.env"
     },
     {
+      "type": "file",
+      "source": "setSshPasswd.sh",
+      "destination": "/home/ubuntu/setSshPasswd.sh"
+    },
+    {
       "type": "shell",
       "inline": [
         "chmod +x /home/ubuntu/packer-icapshell.sh",
         "sudo /home/ubuntu/packer-icapshell.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "chmod +x /home/ubuntu/setSshPasswd.sh",
+        "sudo /home/ubuntu/setSshPasswd.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm -rf /home/ubuntu/icap-infrastructure",
+        "rm /home/ubuntu/packer-icapshell.sh",
+        "rm /home/ubuntu/.env",
+        "rm /home/ubuntu/setSshPasswd.sh"
       ]
     },
     {
@@ -207,7 +228,7 @@
       "type": "shell-local",
       "environment_vars": [
         "OVA_NAME={{user `vm_name`}}-{{user `github_sha`}}.ova",
-        "VM_NAME=csapi-ck8icap",
+        "VM_NAME=csapi-ck8icap-wc.ova",
         "CREATE_OVA={{user `create_ova`}}"
       ],
       "inline": [
