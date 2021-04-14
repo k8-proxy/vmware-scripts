@@ -3,7 +3,7 @@
       "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
       "region": "eu-west-1",
       "vm_name": "glasswall-compliant-kubernetes-ec2-3",
-      "github_sha": null,
+      "RUN_ID": null,
       "team_tag":"",
       "owner_tag":"",
 

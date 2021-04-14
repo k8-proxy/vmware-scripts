@@ -3,7 +3,7 @@
   "builders": [
     {
       "access_key": "{{user `aws_access_key`}}",
-      "ami_name": "{{user `vm_name`}}-{{user `github_sha`}}",
+      "ami_name": "{{user `vm_name`}}-{{user `RUN_ID`}}",
       "instance_type": "t3.large",
       "region": "{{user `region`}}",
       "secret_key": "{{user `aws_secret_key`}}",
@@ -227,8 +227,8 @@
     {
       "type": "shell-local",
       "environment_vars": [
-        "OVA_NAME={{user `vm_name`}}-{{user `github_sha`}}.ova",
-        "VM_NAME=csapi-ck8icap-wc.ova",
+        "OVA_NAME={{user `vm_name`}}-wc-{{user `RUN_ID`}}.ova",
+        "VM_NAME=csapi-ck8icap-wc",
         "CREATE_OVA={{user `create_ova`}}"
       ],
       "inline": [
