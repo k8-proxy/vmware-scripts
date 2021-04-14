@@ -53,6 +53,7 @@ cd administration
 sed -i 's|traefik|nginx|' templates/management-ui/ingress.yml
 helm upgrade administration --values custom-values.yaml --install . --namespace management-ui
 cd ..
+kubectl delete secret/smtpsecret -n management-ui
 kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpHost=$SMTPHOST \
 	--from-literal=SmtpPort=$SMTPPORT \
