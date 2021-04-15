@@ -146,8 +146,8 @@
           "inline_shebang": "/bin/bash",
           "inline": [
             "set -e",
-            "CREATE_OVA={{user `create_sc_ova`}}",
-            "if [[ $create_sc_ova == 'true' ]]; then",
+            "CREATE_SC_OVA={{user `create_sc_ova`}}",
+            "if [[ $CREATE_SC_OVA == 'true' ]]; then",
             "aws ec2 create-instance-export-task --region {{user `region`}} --instance-id {{build `ID`}} --target-environment vmware --export-to-s3-task file://ova-export.json > out.json",
             "fi"
           ]
