@@ -66,6 +66,6 @@ kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
 wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
 echo $CS_API_IMAGE
-sed -i 's|<REPLACE_IMAGE_ID>|'$CS_API_IMAGE'|' deployment.yaml
+sed -i 's|glasswallsolutions/cs-k8s-api:latest|'$CS_API_IMAGE'|' deployment.yaml
 kubectl  apply -f deployment.yaml -n icap-adaptation
 kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":8080}]'
