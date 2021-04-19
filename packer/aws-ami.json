@@ -215,7 +215,8 @@
         "sudo rm -rf /home/ubuntu/icap-infrastructure",
         "sudo rm /home/ubuntu/packer-icapshell.sh",
         "sudo rm /home/ubuntu/.env",
-        "sudo rm /home/ubuntu/setSshPasswd.sh"
+        "sudo rm /home/ubuntu/setSshPasswd.sh",
+        "sudo rm /home/ubuntu/update_partition_size.sh"
       ]
     },
     {
