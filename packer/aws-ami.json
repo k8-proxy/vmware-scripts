@@ -191,6 +191,11 @@
       "destination": "/home/ubuntu/setSshPasswd.sh"
     },
     {
+      "type": "file",
+      "source": "update_partition_size.sh",
+      "destination": "/home/ubuntu/update_partition_size.sh"
+    },
+    {
       "type": "shell",
       "inline": [
         "chmod +x /home/ubuntu/packer-icapshell.sh",

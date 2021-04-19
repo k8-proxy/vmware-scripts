@@ -1,8 +1,8 @@
 #!/bin/bash
 source /home/ubuntu/.env
-if [ -f ./update_partition_size.sh ] ; then
-chmod +x ./update_partition_size.sh
-./update_partition_size.sh
+if [ -f /home/ubuntu/update_partition_size.sh ] ; then
+chmod +x /home/ubuntu/update_partition_size.sh
+/home/ubuntu/update_partition_size.sh
 fi
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b k8-main && cd icap-infrastructure
 mkdir -p /var/local/rancher/host/c/userstore
