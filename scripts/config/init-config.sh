@@ -69,3 +69,5 @@ sudo systemctl enable --now node_exporter
 
 # remove vmware scripts directory
 rm -rf ~/scripts/
+
+sudo wget https://github.com/mikefarah/yq/releases/download/v4.7.0/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
