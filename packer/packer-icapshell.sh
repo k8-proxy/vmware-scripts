@@ -18,7 +18,7 @@ add-apt-repository \
    stable"
 apt-get update
 # install local docker registry
-docker run -d -p localhost:30500:5000 --restart always --name registry registry:2
+docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:2
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
 
 
