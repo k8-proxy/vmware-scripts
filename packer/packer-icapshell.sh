@@ -4,6 +4,27 @@ if [ -f /home/ubuntu/update_partition_size.sh ] ; then
 chmod +x /home/ubuntu/update_partition_size.sh
 /home/ubuntu/update_partition_size.sh
 fi
+
+apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get update
+# install local docker registry
+docker run -d -p localhost:30500:5000 --restart always --name registry registry:2
+docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
+
+
+
+
+
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b k8-main && cd icap-infrastructure
 mkdir -p /var/local/rancher/host/c/userstore
 cp -r default-user/* /var/local/rancher/host/c/userstore/
@@ -34,12 +55,22 @@ git clone https://github.com/filetrust/icap-infrastructure.git -b main /tmp/icap
 cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
 cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
+wget https://github.com/mikefarah/yq/releases/download/v4.7.0/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+requestImage=$(yq eval '.imagestore.requestprocessing.tag' adaptation/values.yaml)
+docker pull glasswallsolutions/icap-request-processing:$requestImage
+docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
+docker push localhost:30500/icap-request-processing:$requestImage
+
+
+
 cd adaptation
 kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl  create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl  create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
-kubectl  create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD} --docker-email=${DOCKER_EMAIL}
-helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
+kubectl  create -n icap-adaptation secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username="" --docker-password="" --docker-email=""
+helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation --set imagestore.requestprocessing.registry='localhost:30500/' \
+--set imagestore.requestprocessing.repository='icap-request-processing'
+docker logout
 kubectl patch svc frontend-icap-lb -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":1344},{"op":"replace","path":"/spec/ports/1/nodePort","value":1345}]'
 cd ..
 cd ncfs
@@ -93,10 +124,10 @@ EOF
 systemctl restart fail2ban
 
 # switching to predictable network interfaces naming
-grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sudo sed -Ei "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 $KERNEL_BOOT_LINE\"/g" /etc/default/grub
+grep "$KERNEL_BOOT_LINE" /etc/default/grub >/dev/null || sed -Ei "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 $KERNEL_BOOT_LINE\"/g" /etc/default/grub
 
 # remove swap 
-swapoff -a && sudo rm -f /swap.img && sudo sed -i '/swap.img/d' /etc/fstab && echo Swap removed
+swapoff -a && rm -f /swap.img && sed -i '/swap.img/d' /etc/fstab && echo Swap removed
 
 # update grub
 update-grub
