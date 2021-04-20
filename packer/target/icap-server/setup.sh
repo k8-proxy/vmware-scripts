@@ -25,7 +25,7 @@ sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io -y
 
 # install local docker registry
-sudo docker run -d -p localhost:30500:5000 --restart always --name registry registry:2
+sudo docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:2
 sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
 
 
