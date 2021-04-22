@@ -127,7 +127,7 @@ popd
 cd ~
 
 # deploy new Go services
-git clone https://github.com/k8-proxy/go-k8s-infra.git -b azopat-tmp && cd go-k8s-infra
+git clone https://github.com/k8-proxy/go-k8s-infra.git -b develop && cd go-k8s-infra
 
 # Scale the existing adaptation service to 0
 kubectl -n icap-adaptation scale --replicas=0 deployment/adaptation-service
