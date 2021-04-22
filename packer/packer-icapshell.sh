@@ -103,7 +103,7 @@ kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"re
 
 # install filedrop
 # get source code
-git clone https://github.com/k8-proxy/k8-rebuild.git --recursive && cd k8-rebuild && git submodule update --init --recursive && git submodule foreach git pull origin main && cd k8-rebuild-rest-api && git pull origin main && cd libs/ && git pull origin master && cd ../../
+git clone https://github.com/k8-proxy/k8-rebuild.git --branch ck8s-filedrop --recursive && cd k8-rebuild && git submodule update --init --recursive && git submodule foreach git pull origin main && cd k8-rebuild-rest-api && git pull origin main && cd libs/ && git pull origin master && cd ../../
 # build images
 docker build k8-rebuild-rest-api -f k8-rebuild-rest-api/Source/Service/Dockerfile -t localhost:30500/k8-rebuild-rest-api
 docker push localhost:30500/k8-rebuild-rest-api
@@ -111,6 +111,7 @@ docker build k8-rebuild-file-drop/app -f k8-rebuild-file-drop/app/Dockerfile -t 
 docker push localhost:30500/k8-rebuild-file-drop
 
 cat >> kubernetes/values.yaml <<EOF
+
 sow-rest-api:
   image:
     registry: localhost:30500
