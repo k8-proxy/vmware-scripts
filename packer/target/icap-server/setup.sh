@@ -142,6 +142,25 @@ cd ~
 # deploy monitoring solution
 git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
 helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP --set monitoring.elasticsearch.username=$MONITORING_USER --set monitoring.elasticsearch.password=$MONITORING_PASSWORD
+popd
+
+# build docker images
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# install local docker registry
+sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
+
+# install gw cloud sdk
+git clone https://github.com/k8-proxy/cs-k8s-api.git && pushd cs-k8s-api
+sudo docker build . -t localhost:30500/cs-k8s-api
+sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
+kubectl apply -nicap-adaptation -f deployment.yaml && popd
 
 # wait until the pods are up
 # sleep 120s
