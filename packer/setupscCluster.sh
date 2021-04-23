@@ -18,7 +18,7 @@ kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_U
 kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_USER=${logging_username}
 printf $(cat /home/ubuntu/logging-password.txt) | base64 | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
 printf $(cat /home/ubuntu/logging-password.txt) | base64 | xargs -I {} kubectl patch secret -n kube-system elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
-kubectl delete pod --namespace fluentd --selector instance=fluentd
+kubectl delete pod --namespace fluentd --selector app.kubernetes.io/instance=fluentd
 
 > /home/ubuntu/monitoring-username.txt
 > /home/ubuntu/monitoring-password.txt

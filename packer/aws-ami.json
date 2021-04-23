@@ -197,6 +197,11 @@
     },
     {
       "type": "file",
+      "source": "wc-coredns-configmap.yml",
+      "destination": "/home/ubuntu/wc-coredns-configmap.yml"
+    },
+    {
+      "type": "file",
       "source": "setupscCluster.sh",
       "destination": "/home/ubuntu/setupscCluster.sh"
     },
