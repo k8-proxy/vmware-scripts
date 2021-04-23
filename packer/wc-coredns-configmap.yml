@@ -20,8 +20,8 @@ data:
         reload
         loadbalance
         hosts {
-             8.8.8.8 influxdb.ops.default.compliantkubernetes
-             8.8.8.8 elastic.ops.default.compliantkubernetes
+             8.8.8.8 influxdb.ops.default.compliantkuberetes
+             8.8.8.8 elastic.ops.default.compliantkuberetes
              fallthrough
            }
     }
