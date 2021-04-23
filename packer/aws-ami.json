@@ -196,6 +196,11 @@
       "destination": "/home/ubuntu/update_partition_size.sh"
     },
     {
+      "type": "file",
+      "source": "setupscCluster.sh",
+      "destination": "/home/ubuntu/setupscCluster.sh"
+    },
+    {
       "type": "shell",
       "inline": [
         "chmod +x /home/ubuntu/packer-icapshell.sh",

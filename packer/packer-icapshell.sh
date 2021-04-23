@@ -145,3 +145,12 @@ install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
 
 # remove vmware scripts directory
 rm -rf ~/scripts/
+
+
+touch /home/ubuntu/monitoring-username.txt
+touch /home/ubuntu/monitoring-password.txt
+touch /home/ubuntu/logging-username.txt
+touch /home/ubuntu/logging-password.txt
+touch /home/ubuntu/service-cluster.txt
+touch /home/ubuntu/service-cluster-ip.txt
+touch /home/ubuntu/cluster.txt
