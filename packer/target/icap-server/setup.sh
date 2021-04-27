@@ -46,6 +46,18 @@ echo "Done installing kubectl"
 curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 echo "Done installing helm"
 
+# build docker images
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# install local docker registry
+sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
+
 # get source code, we clone in in home dir so we can easilly update in place
 cd ~
 ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
@@ -76,9 +88,9 @@ kubectl create -n icap-adaptation secret generic minio-credentials --from-litera
 
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
-	--docker-username=$DOCKER_USERNAME \
-	--docker-password=$DOCKER_PASSWORD \
-	--docker-email=$DOCKER_EMAIL
+	--docker-username="" \
+	--docker-password="" \
+	--docker-email=""
 
 # Setup rabbitMQ
 pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
@@ -143,18 +155,6 @@ cd ~
 git clone https://github.com/k8-proxy/k8-rebuild.git && pushd k8-rebuild
 helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP --set monitoring.elasticsearch.username=$MONITORING_USER --set monitoring.elasticsearch.password=$MONITORING_PASSWORD
 popd
-
-# build docker images
-sudo yum install -y yum-utils
-sudo yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum install -y docker-ce docker-ce-cli containerd.io
-sudo systemctl start docker
-sudo systemctl enable docker
-
-# install local docker registry
-sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
 # install gw cloud sdk
 git clone https://github.com/k8-proxy/cs-k8s-api.git && pushd cs-k8s-api
