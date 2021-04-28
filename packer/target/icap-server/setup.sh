@@ -46,22 +46,6 @@ echo "Done installing kubectl"
 curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 echo "Done installing helm"
 
-# install pip and vmware guestinfo
-sudo yum install -y python-pip open-vm-tools-desktop
-curl -sSL https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/master/install.sh | sudo sh -
-
-# build docker images
-sudo yum install -y yum-utils
-sudo yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum install -y docker-ce docker-ce-cli containerd.io
-sudo systemctl start docker
-sudo systemctl enable docker
-
-# install local docker registry
-sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
-
 # get source code, we clone in in home dir so we can easilly update in place
 cd ~
 ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
@@ -86,7 +70,7 @@ kubectl create ns minio
 
 # Install minio
 helm repo add minio https://helm.min.io/
-helm install -n minio --set accessKey=minio,secretKey=$MINIO_SECRET,buckets[0].name=sourcefiles,buckets[0].policy=none,buckets[0].purge=false,buckets[1].name=cleanfiles,buckets[1].policy=none,buckets[1].purge=false,fullnameOverride=minio-endpoint,persistence.enabled=false minio/minio --generate-name
+helm install -n minio --set accessKey=minio,secretKey=$MINIO_SECRET,buckets[0].name=sourcefiles,buckets[0].policy=none,buckets[0].purge=false,buckets[1].name=cleanfiles,buckets[1].policy=none,buckets[1].purge=false,fullnameOverride=minio-server,persistence.enabled=false minio/minio --generate-name
 
 kubectl create -n icap-adaptation secret generic minio-credentials --from-literal=username='minio' --from-literal=password=$MINIO_SECRET
 
@@ -137,7 +121,7 @@ popd
 cd ~
 
 # deploy new Go services
-git clone https://github.com/k8-proxy/go-k8s-infra.git -b azopat-tmp && cd go-k8s-infra
+git clone https://github.com/k8-proxy/go-k8s-infra.git -b develop && cd go-k8s-infra
 
 # Scale the existing adaptation service to 0
 kubectl -n icap-adaptation scale --replicas=0 deployment/adaptation-service
@@ -150,9 +134,21 @@ popd
 cd ~
 
 # deploy monitoring solution
-git clone https://github.com/k8-proxy/k8-rebuild.git && pushd k8-rebuild
+git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
 helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP --set monitoring.elasticsearch.username=$MONITORING_USER --set monitoring.elasticsearch.password=$MONITORING_PASSWORD
 popd
+
+# build docker images
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# install local docker registry
+sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
 # install gw cloud sdk
 git clone https://github.com/k8-proxy/cs-k8s-api.git && pushd cs-k8s-api
