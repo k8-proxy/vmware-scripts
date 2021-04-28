@@ -46,6 +46,10 @@ echo "Done installing kubectl"
 curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 echo "Done installing helm"
 
+# install pip and vmware guestinfo
+sudo yum install -y python-pip open-vm-tools-desktop
+curl -sSL https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/master/install.sh | sudo sh -
+
 # get source code, we clone in in home dir so we can easilly update in place
 cd ~
 ICAP_BRANCH=${ICAP_BRANCH:-k8-develop}
