@@ -46,6 +46,10 @@ echo "Done installing kubectl"
 curl -sfL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 echo "Done installing helm"
 
+# install pip and vmware guestinfo
+sudo yum install -y python-pip open-vm-tools-desktop
+curl -sSL https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/master/install.sh | sudo sh -
+
 # build docker images
 sudo yum install -y yum-utils
 sudo yum-config-manager \
@@ -85,12 +89,6 @@ helm repo add minio https://helm.min.io/
 helm install -n minio --set accessKey=minio,secretKey=$MINIO_SECRET,buckets[0].name=sourcefiles,buckets[0].policy=none,buckets[0].purge=false,buckets[1].name=cleanfiles,buckets[1].policy=none,buckets[1].purge=false,fullnameOverride=minio-endpoint,persistence.enabled=false minio/minio --generate-name
 
 kubectl create -n icap-adaptation secret generic minio-credentials --from-literal=username='minio' --from-literal=password=$MINIO_SECRET
-
-kubectl create -n icap-adaptation secret docker-registry regcred \
-	--docker-server=https://index.docker.io/v1/ \
-	--docker-username="" \
-	--docker-password="" \
-	--docker-email=""
 
 # Setup rabbitMQ
 pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
