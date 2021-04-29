@@ -158,6 +158,7 @@ sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 git clone https://github.com/k8-proxy/cs-k8s-api.git && pushd cs-k8s-api
 sudo docker build . -t localhost:30500/cs-k8s-api
 sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
+sed -i "s|8080|8088|"  deployment.yaml
 kubectl apply -nicap-adaptation -f deployment.yaml && popd
 
 # allow password login (useful when deployed to esxi)
