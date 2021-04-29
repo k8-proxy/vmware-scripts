@@ -37,38 +37,6 @@ write_files:
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.adaptation-service | tr '\r' '\n' > /home/ubuntu/image-adaptation-service.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.archive-adaptation-service | tr '\r' '\n' > /home/ubuntu/image-archive-adaptation-service.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.event-submission-service | tr '\r' '\n' > /home/ubuntu/image-event-submission-service.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.glasswall-icap-adaptation-event-api | tr '\r' '\n' > /home/ubuntu/image-glasswall-icap-adaptation-event-api.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.mvp-icap-service | tr '\r' '\n' > /home/ubuntu/image-mvp-icap-service.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.policy-update-service | tr '\r' '\n' > /home/ubuntu/image-policy-update-service.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.icap-request-processing | tr '\r' '\n' > /home/ubuntu/image-icap-request-processing.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
-            yq r user-data.txt glasswall.images.image-proxy-rest-api | tr '\r' '\n' > /home/ubuntu/image-proxy-rest-api.txt
-    docker run --rm \
-            -v /var/lib/cloud/instance:/workdir \
-            mikefarah/yq:3 \
             yq r user-data.txt glasswall.monitoring.username | tr '\r' '\n' > /home/ubuntu/monitoring-username.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
@@ -90,6 +58,10 @@ write_files:
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
             yq r user-data.txt glasswall.service-cluster | tr '\r' '\n' > /home/ubuntu/service-cluster.txt
+    docker run --rm \
+            -v /var/lib/cloud/instance:/workdir \
+            mikefarah/yq:3 \
+            yq r user-data.txt glasswall.service-cluster-ip | tr '\r' '\n' > /home/ubuntu/service-cluster-ip.txt
     ec2metadata --instance-id > /home/ubuntu/cluster.txt
     cluster=$(cat /home/ubuntu/cluster.txt)
     monitoring_username=$(cat /home/ubuntu/monitoring-username.txt)
@@ -98,19 +70,14 @@ write_files:
     logging_password=$(cat /home/ubuntu/logging-password.txt)
     domain=$(cat /home/ubuntu/domain.txt)
     service_cluster=$(cat /home/ubuntu/service-cluster.txt)
-
-    image_adaptation_service=$(cat /home/ubuntu/image-adaptation-service.txt)
-    image_archive_adaptation_service=$(cat /home/ubuntu/image-archive-adaptation-service.txt)
-    image_event_submission_service=$(cat /home/ubuntu/image-event-submission-service.txt)
-    image_glasswall_icap_adaptation_event_api=$(cat /home/ubuntu/image-glasswall-icap-adaptation-event-api.txt)
-    image_mvp_icap_service=$(cat /home/ubuntu/image-mvp-icap-service.txt)
-    image_policy_update_service=$(cat /home/ubuntu/image-policy-update-service.txt)
-    image_icap_request_processing=$(cat /home/ubuntu/image-icap-request-processing.txt)
-    image_proxy_rest_api=$(cat /home/ubuntu/image-proxy-rest-api.txt)
+    service_cluster_ip=$(cat /home/ubuntu/service-cluster-ip.txt)
 
     chown -R 1000:1000 /mnt/disks/
 
     export KUBECONFIG=/etc/kubernetes/admin.conf
+    sed -i "s|8.8.8.8|$service_cluster_ip|" /home/ubuntu/wc-coredns-configmap.yml
+    kubectl apply -f wc-coredns-configmap.yml
+    kubectl delete pod --namespace kube-system --selector k8s-app=kube-dns
 
     cat /home/ubuntu/cluster.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/externalLabels/cluster", "value":"'{}'"}]'
     echo "https://influxdb.${service_cluster}/api/v1/prom/write?db=workload_cluster&u=${monitoring_username}&p=${monitoring_password}" > /home/ubuntu/influxdb-url.txt
@@ -126,19 +93,17 @@ write_files:
     cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
     cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n kube-system elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
 
-    kubectl set image deployment/adaptation-service -n icap-adaptation adaptation-service=${image_adaptation_service} --record
-    kubectl set image deployment/archive-adaptation-service -n icap-adaptation adaptation-service=${image_archive_adaptation_service} --record
-    kubectl set image deployment/event-submission-service -n icap-adaptation event-submission-service=${image_event_submission_service} --record
-    kubectl set image deployment/glasswall-icap-adaptation-event-api -n icap-adaptation icap-adaptation=${image_glasswall_icap_adaptation_event_api} --record
-    kubectl set image deployment/mvp-icap-service -n icap-adaptation mvp-icap-service=${image_mvp_icap_service} --record
-    kubectl set image deployment/policy-update-service -n icap-adaptation policy-update-service=${image_policy_update_service} --record
-    if [[ ! -z "${image_icap_request_processing}" ]]; then
-      kubectl set env deployment/adaptation-service -n icap-adaptation REQUEST_PROCESSING_IMAGE=${image_icap_request_processing}
-    fi
-    kubectl set image deployment/proxy-rest-api -n icap-adaptation proxy-rest-api=${image_proxy_rest_api} --record
-
     while [ ! -d /mnt/disks/prometheus-db ]; do sleep 10; done
     chown -R 1000:1000 /mnt/disks/prometheus-db
+
+    > /home/ubuntu/monitoring-username.txt
+    > /home/ubuntu/monitoring-password.txt
+    > /home/ubuntu/logging-username.txt
+    > /home/ubuntu/logging-password.txt
+    > /home/ubuntu/service-cluster.txt
+    > /home/ubuntu/service-cluster-ip.txt
+    > /home/ubuntu/cluster.txt
+    > /home/ubuntu/domain.txt
 
     exit
 

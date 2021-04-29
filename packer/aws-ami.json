@@ -193,6 +193,11 @@
     },
     {
       "type": "file",
+      "source": "wc-coredns-configmap.yml",
+      "destination": "/home/ubuntu/wc-coredns-configmap.yml"
+    },
+    {
+      "type": "file",
       "source": "update_partition_size.sh",
       "destination": "/home/ubuntu/update_partition_size.sh"
     },
@@ -217,7 +222,8 @@
         "sudo rm /home/ubuntu/packer-icapshell.sh",
         "sudo rm /home/ubuntu/.env",
         "sudo rm /home/ubuntu/setSshPasswd.sh",
-        "sudo rm /home/ubuntu/update_partition_size.sh"
+        "sudo rm /home/ubuntu/update_partition_size.sh",
+        "sudo rm /home/ubuntu/wc-coredns-configmap.yml"
       ]
     },
     {
