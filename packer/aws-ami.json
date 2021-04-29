@@ -222,8 +222,7 @@
         "sudo rm /home/ubuntu/packer-icapshell.sh",
         "sudo rm /home/ubuntu/.env",
         "sudo rm /home/ubuntu/setSshPasswd.sh",
-        "sudo rm /home/ubuntu/update_partition_size.sh",
-        "sudo rm /home/ubuntu/wc-coredns-configmap.yml"
+        "sudo rm /home/ubuntu/update_partition_size.sh"        
       ]
     },
     {

@@ -77,6 +77,7 @@ write_files:
     export KUBECONFIG=/etc/kubernetes/admin.conf
     sed -i "s|8.8.8.8|$service_cluster_ip|" /home/ubuntu/wc-coredns-configmap.yml
     kubectl apply -f wc-coredns-configmap.yml
+    rm /home/ubuntu/wc-coredns-configmap.yml
     kubectl delete pod --namespace kube-system --selector k8s-app=kube-dns
 
     cat /home/ubuntu/cluster.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/externalLabels/cluster", "value":"'{}'"}]'
