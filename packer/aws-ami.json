@@ -191,11 +191,7 @@
       "source": "setSshPasswd.sh",
       "destination": "/home/ubuntu/setSshPasswd.sh"
     },
-    {
-      "type": "file",
-      "source": "wc-coredns-configmap.yml",
-      "destination": "/home/ubuntu/wc-coredns-configmap.yml"
-    },
+    
     {
       "type": "file",
       "source": "update_partition_size.sh",
