@@ -131,6 +131,9 @@ git clone https://github.com/k8-proxy/go-k8s-infra.git -b develop && cd go-k8s-i
 
 # Scale the existing adaptation service to 0
 kubectl -n icap-adaptation scale --replicas=0 deployment/adaptation-service
+kubectl  -n icap-adaptation delete cronjob --all
+kubectl  -n icap-adaptation delete job --all
+
 
 # Apply helm chart to create the services
 pushd services
