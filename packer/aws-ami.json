@@ -54,13 +54,13 @@
       "type": "shell",
       "inline": [
         "sleep 30",
-        "sudo apt -y update && sudo apt -y upgrade"
+        "sudo yum -y update && sudo yum -y upgrade"
       ]
     },
     {
       "type": "shell",
       "inline": [
-        "sudo apt -y install python3-pip",
+        "sudo yum -y install python3-pip",
         "sudo pip3 install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz"
       ]
     },
