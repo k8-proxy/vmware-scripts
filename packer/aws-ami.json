@@ -61,6 +61,7 @@
       "type": "shell",
       "inline": [
         "sudo yum -y install python3-pip",
+        "sudo yum -y install cloud-utils",
         "sudo pip3 install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz"
       ]
     },
