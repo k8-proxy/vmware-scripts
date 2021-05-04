@@ -20,16 +20,16 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "CentOS Linux 7 x86_64 HVM EBS ENA 1901*",
+          "name": "CentOS 7.9.2009 x86_64",
           "root-device-type": "ebs"
         },
         "owners": [
-          "099720109477"
+          "125523088429"
         ],
         "most_recent": true
       },
       "tags": {
-        "OS_Version": "Ubuntu-20.04",
+        "OS_Version": "CentOS 7.9.2009 x86_64",
         "Base_AMI_Name": "{{ .SourceAMIName }}"
       },
       "run_tags": {
@@ -231,7 +231,7 @@
       "type": "shell-local",
       "environment_vars": [
         "OVA_NAME={{user `vm_name`}}-wc-{{user `RUN_ID`}}.ova",
-        "VM_NAME=csapi-ck8icap",
+        "VM_NAME=ck8-minio-with-sdk",
         "CREATE_OVA={{user `create_ova`}}"
       ],
       "inline": [
