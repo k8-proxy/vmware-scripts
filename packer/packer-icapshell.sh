@@ -136,12 +136,12 @@ update-grub
 install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
 
 # installing initconfig ( for running wizard on reboot )
-#cp -f ~/scripts/scripts/bootscript/initconfig.service /etc/systemd/system/initconfig.service
-#install -T ~/scripts/scripts/bootscript/initconfig.sh /usr/local/bin/initconfig.sh -m 0755
-#systemctl daemon-reload
+cp -f ~/scripts/scripts/bootscript/initconfig.service /etc/systemd/system/initconfigwizard.service
+install -T ~/scripts/scripts/bootscript/initconfig.sh /usr/local/bin/initconfig.sh -m 0755
+systemctl daemon-reload
 
 # enable initconfig for the next reboot
-#systemctl enable initconfig
+systemctl enable initconfigwizard
 
 # remove vmware scripts directory
 rm -rf ~/scripts/
