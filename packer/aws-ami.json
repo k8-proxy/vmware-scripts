@@ -212,7 +212,7 @@
         "sudo rm -rf /home/centos/icap-infrastructure",
         "sudo rm /home/centos/packer-icapshell.sh",
         "sudo rm /home/centos/.env",
-        "sudo rm /home/centos/setSshPasswd.sh",
+        "sudo rm /home/centos/setSshPasswd.sh"
 
       ]
     },
