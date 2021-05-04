@@ -20,7 +20,7 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*",
+          "name": "CentOS Linux 7 x86_64 HVM EBS ENA 1901*",
           "root-device-type": "ebs"
         },
         "owners": [
@@ -179,46 +179,41 @@
     {
       "type": "file",
       "source": "packer-icapshell.sh",
-      "destination": "/home/ubuntu/packer-icapshell.sh"
+      "destination": "/home/centos/packer-icapshell.sh"
     },
     {
       "type": "file",
       "source": ".env",
-      "destination": "/home/ubuntu/.env"
+      "destination": "/home/centos/.env"
     },
     {
       "type": "file",
       "source": "setSshPasswd.sh",
-      "destination": "/home/ubuntu/setSshPasswd.sh"
+      "destination": "/home/centos/setSshPasswd.sh"
     },
-    
-    {
-      "type": "file",
-      "source": "update_partition_size.sh",
-      "destination": "/home/ubuntu/update_partition_size.sh"
-    },
+
     {
       "type": "shell",
       "inline": [
-        "chmod +x /home/ubuntu/packer-icapshell.sh",
-        "sudo /home/ubuntu/packer-icapshell.sh"
+        "chmod +x /home/centos/packer-icapshell.sh",
+        "sudo /home/centos/packer-icapshell.sh"
       ]
     },
     {
       "type": "shell",
       "inline": [
-        "chmod +x /home/ubuntu/setSshPasswd.sh",
-        "sudo /home/ubuntu/setSshPasswd.sh"
+        "chmod +x /home/centos/setSshPasswd.sh",
+        "sudo /home/centos/setSshPasswd.sh"
       ]
     },
     {
       "type": "shell",
       "inline": [
-        "sudo rm -rf /home/ubuntu/icap-infrastructure",
-        "sudo rm /home/ubuntu/packer-icapshell.sh",
-        "sudo rm /home/ubuntu/.env",
-        "sudo rm /home/ubuntu/setSshPasswd.sh",
-        "sudo rm /home/ubuntu/update_partition_size.sh"        
+        "sudo rm -rf /home/centos/icap-infrastructure",
+        "sudo rm /home/centos/packer-icapshell.sh",
+        "sudo rm /home/centos/.env",
+        "sudo rm /home/centos/setSshPasswd.sh",
+
       ]
     },
     {
