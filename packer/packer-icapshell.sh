@@ -106,18 +106,6 @@ kubectl  create -n management-ui secret generic smtpsecret \
 	--from-literal=SmtpSecureSocketOptions='http://management-ui:8080'
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 cd ~
 
 # deploy new Go services
