@@ -37,53 +37,53 @@ write_files:
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.monitoring.username | tr '\r' '\n' > /home/centos/monitoring-username.txt
+            yq r user-data.txt glasswall.monitoring.username | tr '\r' '\n' > /home/ubuntu/monitoring-username.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.monitoring.password | tr '\r' '\n' > /home/centos/monitoring-password.txt
+            yq r user-data.txt glasswall.monitoring.password | tr '\r' '\n' > /home/ubuntu/monitoring-password.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.logging.username | tr '\r' '\n' > /home/centos/logging-username.txt
+            yq r user-data.txt glasswall.logging.username | tr '\r' '\n' > /home/ubuntu/logging-username.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.logging.password | tr '\r' '\n' > /home/centos/logging-password.txt
+            yq r user-data.txt glasswall.logging.password | tr '\r' '\n' > /home/ubuntu/logging-password.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.domain | tr '\r' '\n' > /home/centos/domain.txt
+            yq r user-data.txt glasswall.domain | tr '\r' '\n' > /home/ubuntu/domain.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.service-cluster | tr '\r' '\n' > /home/centos/service-cluster.txt
+            yq r user-data.txt glasswall.service-cluster | tr '\r' '\n' > /home/ubuntu/service-cluster.txt
     docker run --rm \
             -v /var/lib/cloud/instance:/workdir \
             mikefarah/yq:3 \
-            yq r user-data.txt glasswall.service-cluster-ip | tr '\r' '\n' > /home/centos/service-cluster-ip.txt
-    ec2metadata --instance-id > /home/centos/cluster.txt
-    cluster=$(cat /home/centos/cluster.txt)
-    monitoring_username=$(cat /home/centos/monitoring-username.txt)
-    monitoring_password=$(cat /home/centos/monitoring-password.txt)
-    logging_username=$(cat /home/centos/logging-username.txt)
-    logging_password=$(cat /home/centos/logging-password.txt)
-    domain=$(cat /home/centos/domain.txt)
-    service_cluster=$(cat /home/centos/service-cluster.txt)
-    service_cluster_ip=$(cat /home/centos/service-cluster-ip.txt)
+            yq r user-data.txt glasswall.service-cluster-ip | tr '\r' '\n' > /home/ubuntu/service-cluster-ip.txt
+    ec2metadata --instance-id > /home/ubuntu/cluster.txt
+    cluster=$(cat /home/ubuntu/cluster.txt)
+    monitoring_username=$(cat /home/ubuntu/monitoring-username.txt)
+    monitoring_password=$(cat /home/ubuntu/monitoring-password.txt)
+    logging_username=$(cat /home/ubuntu/logging-username.txt)
+    logging_password=$(cat /home/ubuntu/logging-password.txt)
+    domain=$(cat /home/ubuntu/domain.txt)
+    service_cluster=$(cat /home/ubuntu/service-cluster.txt)
+    service_cluster_ip=$(cat /home/ubuntu/service-cluster-ip.txt)
 
     chown -R 1000:1000 /mnt/disks/
 
     export KUBECONFIG=/etc/kubernetes/admin.conf
-    wget https://raw.githubusercontent.com/k8-proxy/vmware-scripts/csapi-ck8-filedrop/packer/wc-coredns-configmap.yml /home/centos/wc-coredns-configmap.yml
-    sed -i "s|8.8.8.8|$service_cluster_ip|" /home/centos/wc-coredns-configmap.yml
-    kubectl apply -f /home/centos/wc-coredns-configmap.yml
+    wget https://raw.githubusercontent.com/k8-proxy/vmware-scripts/csapi-ck8-filedrop/packer/wc-coredns-configmap.yml /home/ubuntu/wc-coredns-configmap.yml
+    sed -i "s|8.8.8.8|$service_cluster_ip|" /home/ubuntu/wc-coredns-configmap.yml
+    kubectl apply -f /home/ubuntu/wc-coredns-configmap.yml
     kubectl delete pod --namespace kube-system --selector k8s-app=kube-dns
-    rm /home/centos/wc-coredns-configmap.yml
+    rm /home/ubuntu/wc-coredns-configmap.yml
 
-    cat /home/centos/cluster.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/externalLabels/cluster", "value":"'{}'"}]'
-    echo "https://influxdb.${service_cluster}/api/v1/prom/write?db=workload_cluster&u=${monitoring_username}&p=${monitoring_password}" > /home/centos/influxdb-url.txt
-    cat /home/centos/influxdb-url.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/remoteWrite/0/url", "value":"'{}'"}]'
+    cat /home/ubuntu/cluster.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/externalLabels/cluster", "value":"'{}'"}]'
+    echo "https://influxdb.${service_cluster}/api/v1/prom/write?db=workload_cluster&u=${monitoring_username}&p=${monitoring_password}" > /home/ubuntu/influxdb-url.txt
+    cat /home/ubuntu/influxdb-url.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/remoteWrite/0/url", "value":"'{}'"}]'
     kubectl delete pod -n monitoring prometheus-kube-prometheus-stack-prometheus-0
 
     kubectl get cm -n fluentd fluentd-fluentd-elasticsearch -o yaml | sed 's/CLUSTER_NAME/'"${cluster}"'/' | kubectl apply -f -
@@ -92,20 +92,20 @@ write_files:
     kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_HOSTS=elastic.${service_cluster}
     kubectl set env daemonset.apps/fluentd-fluentd-elasticsearch -n fluentd OUTPUT_USER=${logging_username}
     kubectl set env daemonset.apps/fluentd-system-fluentd-elasticsearch -n kube-system OUTPUT_USER=${logging_username}
-    cat /home/centos/logging-password.txt | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
-    cat /home/centos/logging-password.txt | xargs -I {} kubectl patch secret -n kube-system elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
+    cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n fluentd elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
+    cat /home/ubuntu/logging-password.txt | xargs -I {} kubectl patch secret -n kube-system elasticsearch --type='json' -p '[{"op": "replace", "path": "/data/password", "value":"'{}'"}]'
 
     while [ ! -d /mnt/disks/prometheus-db ]; do sleep 10; done
     chown -R 1000:1000 /mnt/disks/prometheus-db
 
-    > /home/centos/monitoring-username.txt
-    > /home/centos/monitoring-password.txt
-    > /home/centos/logging-username.txt
-    > /home/centos/logging-password.txt
-    > /home/centos/service-cluster.txt
-    > /home/centos/service-cluster-ip.txt
-    > /home/centos/cluster.txt
-    > /home/centos/domain.txt
+    > /home/ubuntu/monitoring-username.txt
+    > /home/ubuntu/monitoring-password.txt
+    > /home/ubuntu/logging-username.txt
+    > /home/ubuntu/logging-password.txt
+    > /home/ubuntu/service-cluster.txt
+    > /home/ubuntu/service-cluster-ip.txt
+    > /home/ubuntu/cluster.txt
+    > /home/ubuntu/domain.txt
 
     exit
 
