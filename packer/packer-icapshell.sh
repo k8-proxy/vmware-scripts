@@ -141,16 +141,16 @@ cd ~
 ## install local docker registry
 #sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
 
-## install gw cloud sdk
-#git clone https://github.com/k8-proxy/cs-k8s-api.git && cd cs-k8s-api
-#sudo docker build . -t localhost:30500/cs-k8s-api
-#sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
-#kubectl apply -nicap-adaptation -f deployment.yaml
+# install gw cloud sdk
+git clone https://github.com/k8-proxy/cs-k8s-api.git && cd cs-k8s-api
+sudo docker build . -t localhost:30500/cs-k8s-api
+sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
+kubectl apply -nicap-adaptation -f deployment.yaml
 
-wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
-echo $CS_API_IMAGE
-sed -i 's|glasswallsolutions/cs-k8s-api:latest|'$CS_API_IMAGE'|' deployment.yaml
-kubectl  apply -f deployment.yaml -n icap-adaptation
+#wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
+#echo $CS_API_IMAGE
+#sed -i 's|glasswallsolutions/cs-k8s-api:latest|'$CS_API_IMAGE'|' deployment.yaml
+#kubectl  apply -f deployment.yaml -n icap-adaptation
 kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":8080}]'
 
 # install filedrop
