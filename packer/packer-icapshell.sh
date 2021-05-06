@@ -22,9 +22,6 @@ docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 
-
-
-
 git clone https://github.com/k8-proxy/icap-infrastructure.git -b k8-main && cd icap-infrastructure
 mkdir -p /var/local/rancher/host/c/userstore
 cp -r default-user/* /var/local/rancher/host/c/userstore/
@@ -35,6 +32,7 @@ kubectl  create ns icap-ncfs
 kubectl create ns minio
 
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
 # Install minio
 helm repo add minio https://helm.min.io/
 helm install -n minio --set accessKey=minio,secretKey=$MINIO_SECRET,buckets[0].name=sourcefiles,buckets[0].policy=none,buckets[0].purge=false,buckets[1].name=cleanfiles,buckets[1].policy=none,buckets[1].purge=false,fullnameOverride=minio-server,persistence.enabled=false minio/minio --generate-name
@@ -57,6 +55,7 @@ OU = IT
 CN = icap-server
 emailAddress = admin@glasswall.com
 EOF
+
 openssl req -newkey rsa:2048 -config openssl.cnf -nodes -keyout  /tmp/tls.key -x509 -days 365 -out /tmp/certificate.crt
 kubectl  create secret tls icap-service-tls-config --namespace icap-adaptation --key /tmp/tls.key --cert /tmp/certificate.crt
 # Clone ICAP SOW Version
@@ -69,8 +68,6 @@ requestImage=$(yq eval '.imagestore.requestprocessing.tag' adaptation/values.yam
 docker pull glasswallsolutions/icap-request-processing:$requestImage
 docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
 docker push localhost:30500/icap-request-processing:$requestImage
-
-
 
 cd adaptation
 kubectl  create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
@@ -116,41 +113,22 @@ kubectl -n icap-adaptation scale --replicas=0 deployment/adaptation-service
 kubectl  -n icap-adaptation delete cronjob --all
 kubectl  -n icap-adaptation delete job --all
 
-
 # Apply helm chart to create the services
 cd services
 helm upgrade servicesv2 --install . --namespace icap-adaptation
 
-
 cd ~
 
-## deploy monitoring solution
-#git clone https://github.com/k8-proxy/k8-rebuild.git && cd k8-rebuild
-#helm install sow-monitoring monitoring --set monitoring.elasticsearch.host=$MONITORING_IP --set monitoring.elasticsearch.username=$MONITORING_USER --set monitoring.elasticsearch.password=$MONITORING_PASSWORD
-
-
-## build docker images
-#sudo yum install -y yum-utils
-#sudo yum-config-manager \
-#    --add-repo \
-#    https://download.docker.com/linux/centos/docker-ce.repo
-#sudo yum install -y docker-ce docker-ce-cli containerd.io
-#sudo systemctl start docker
-#sudo systemctl enable docker
-#
-## install local docker registry
-#sudo docker run -d -p 30500:5000 --restart always --name registry registry:2
+#git clone https://github.com/k8-proxy/cs-k8s-api.git && cd cs-k8s-api
+#sudo docker build . -t localhost:30500/cs-k8s-api
+#sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
+#kubectl apply -nicap-adaptation -f deployment.yaml
 
 # install gw cloud sdk
-git clone https://github.com/k8-proxy/cs-k8s-api.git && cd cs-k8s-api
-sudo docker build . -t localhost:30500/cs-k8s-api
-sed -i "s|<REPLACE_IMAGE_ID>|localhost:30500/cs-k8s-api|"  deployment.yaml
-kubectl apply -nicap-adaptation -f deployment.yaml
-
-#wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
-#echo $CS_API_IMAGE
-#sed -i 's|glasswallsolutions/cs-k8s-api:latest|'$CS_API_IMAGE'|' deployment.yaml
-#kubectl  apply -f deployment.yaml -n icap-adaptation
+wget https://raw.githubusercontent.com/k8-proxy/cs-k8s-api/main/deployment.yaml
+echo $CS_API_IMAGE
+sed -i 's|glasswallsolutions/cs-k8s-api:latest|'$CS_API_IMAGE'|' deployment.yaml
+kubectl  apply -f deployment.yaml -n icap-adaptation
 kubectl patch svc proxy-rest-api -n icap-adaptation --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":8080}]'
 
 # install filedrop
@@ -182,7 +160,6 @@ EOF
 helm upgrade --install k8-rebuild \
   --set nginx.service.type=ClusterIP \
   --atomic kubernetes/
-
 
 # defining vars
 DEBIAN_FRONTEND=noninteractive
