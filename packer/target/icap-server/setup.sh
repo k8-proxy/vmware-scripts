@@ -5,15 +5,15 @@ source ./env
 fi
 
 # install docker
-# sudo yum-config-manager \
-#     --add-repo \
-#     https://download.docker.com/linux/centos/docker-ce.repo
-# sudo yum install -y docker-ce docker-ce-cli containerd.io
-# sudo systemctl start docker
-# sudo systemctl enable docker
+sudo yum-config-manager \
+     --add-repo \
+     https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
 
 # install local docker registry
-# sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
+sudo docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:2
 sudo hostnamectl set-hostname icap-server
 sudo tee -a /etc/hosts << EOF
 127.0.0.1 icap-server
@@ -53,11 +53,11 @@ cd ~/icap-infrastructure
 request_processing_repo="glasswallsolutions/icap-request-processing"
 request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
 echo "using $request_processing_repo:$request_processing_tag for icap-request-processing"
-# sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-# sudo docker pull $request_processing_repo:$request_processing_tag
-# sudo docker tag $request_processing_repo:$request_processing_tag localhost:5000/$request_processing_repo:$request_processing_tag
-# sudo docker push localhost:5000/$request_processing_repo:$request_processing_tag
-# yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:5000/
+sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+sudo docker pull $request_processing_repo:$request_processing_tag
+sudo docker tag $request_processing_repo:$request_processing_tag localhost:30500/$request_processing_repo:$request_processing_tag
+sudo docker push localhost:30500/$request_processing_repo:$request_processing_tag
+yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:30500/
 
 # Admin ui default credentials
 sudo mkdir -p /var/local/rancher/host/c/userstore
@@ -70,9 +70,9 @@ kubectl create ns icap-ncfs
 
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
-	--docker-username=$DOCKER_USERNAME \
-	--docker-password=$DOCKER_PASSWORD \
-	--docker-email=$DOCKER_EMAIL
+	--docker-username="" \
+	--docker-password="" \
+	--docker-email=""
 
 n=0; until ((n >= 60)); do kubectl -n icap-adaptation get serviceaccount default -o name && break; n=$((n + 1)); sleep 1; done; ((n < 60))
 kubectl run rebuild -n icap-adaptation -i --restart=Never --rm \
@@ -109,7 +109,8 @@ pushd adaptation
 kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
-helm upgrade adaptation --values custom-values.yaml --set cicapservice.conf.DebugLevel=7 --install . --namespace icap-adaptation
+helm upgrade adaptation --values custom-values.yaml --set cicapservice.conf.DebugLevel=7 --install . --namespace icap-adaptation  --set imagestore.requestprocessing.registry='localhost:30500/' \
+--set imagestore.requestprocessing.repository='icap-request-processing'
 popd
 
 # Setup icap policy management
