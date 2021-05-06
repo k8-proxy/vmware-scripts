@@ -55,9 +55,9 @@ sudo snap install yq
 request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
 echo "using $request_processing_repo:$request_processing_tag for icap-request-processing"
 sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-sudo docker pull $request_processing_repo:$request_processing_tag
-sudo docker tag $request_processing_repo:$request_processing_tag localhost:30500/$request_processing_repo:$request_processing_tag
-sudo docker push localhost:30500/$request_processing_repo:$request_processing_tag
+sudo docker pull glasswallsolutions/icap-request-processing:$requestImage
+sudo docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
+sudo docker push localhost:30500/icap-request-processing:$requestImage
 yq write -i adaptation/values.yaml 'imagestore.requestprocessing.registry' localhost:30500/
 
 # Admin ui default credentials
