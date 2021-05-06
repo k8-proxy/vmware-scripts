@@ -11,24 +11,43 @@ chmod +x ./update_partition_size.sh
 fi
 
 # Integrate Instance based healthcheck
-pwd
-sudo apt update -y
-sudo apt install c-icap -y
-cp -r healthcheck ~
-chmod +x ~/healthcheck/healthcheck.sh
-sudo apt install python3-pip -y
-export PATH=$PATH:$HOME/.local/bin
-pip3 install fastapi
-pip3 install uvicorn
-pip3 install uvloop
-pip3 install httptools
-pip3 install requests
-pip3 install aiofiles
-sudo apt install gunicorn -y
-sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
-sudo systemctl start gunicorn
-sudo systemctl enable gunicorn
-crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+# pwd
+# sudo apt update -y
+# sudo apt install c-icap -y
+# cp -r healthcheck ~
+# chmod +x ~/healthcheck/healthcheck.sh
+# sudo apt install python3-pip -y
+# export PATH=$PATH:$HOME/.local/bin
+# pip3 install fastapi
+# pip3 install uvicorn
+# pip3 install uvloop
+# pip3 install httptools
+# pip3 install requests
+# pip3 install aiofiles
+# sudo apt install gunicorn -y
+# sudo mv ~/healthcheck/gunicorn.service /etc/systemd/system/
+# sudo systemctl start gunicorn
+# sudo systemctl enable gunicorn
+# crontab -l 2>/dev/null | { cat; echo "* * * * *  flock -n /home/ubuntu/healthcheck/status.lock /home/ubuntu/healthcheck/healthcheck.sh 2>> /home/ubuntu/healthcheck/cronstatus.log"; } | crontab -
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io -y
+
+# install local docker registry
+sudo docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:2
+sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
+
 
 # install k3s
 curl -sfL https://get.k3s.io | sh -
@@ -54,6 +73,12 @@ git clone https://github.com/filetrust/icap-infrastructure.git -b $ICAP_SOW_BRAN
 cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
 cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
+sudo snap install yq
+requestImage=$(yq eval '.imagestore.requestprocessing.tag' adaptation/values.yaml)
+sudo docker pull glasswallsolutions/icap-request-processing:$requestImage
+sudo docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
+sudo docker push localhost:30500/icap-request-processing:$requestImage
+
 
 # Admin ui default credentials
 sudo mkdir -p /var/local/rancher/host/c/userstore
@@ -66,9 +91,9 @@ kubectl create ns icap-ncfs
 
 kubectl create -n icap-adaptation secret docker-registry regcred \
 	--docker-server=https://index.docker.io/v1/ \
-	--docker-username=$DOCKER_USERNAME \
-	--docker-password=$DOCKER_PASSWORD \
-	--docker-email=$DOCKER_EMAIL
+	--docker-username="" \
+	--docker-password="" \
+	--docker-email=""
 
 # Setup rabbitMQ
 pushd rabbitmq && helm upgrade rabbitmq --install . --namespace icap-adaptation && popd
@@ -96,7 +121,9 @@ pushd adaptation
 kubectl create -n icap-adaptation secret generic policyupdateservicesecret --from-literal=username=policy-management --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic transactionqueryservicesecret --from-literal=username=query-service --from-literal=password='long-password'
 kubectl create -n icap-adaptation secret generic  rabbitmq-service-default-user --from-literal=username=guest --from-literal=password='guest'
-helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation
+helm upgrade adaptation --values custom-values.yaml --install . --namespace icap-adaptation  --set imagestore.requestprocessing.registry='localhost:30500/' \
+--set imagestore.requestprocessing.repository='icap-request-processing'
+sudo docker logout
 popd
 
 # Setup icap policy management
