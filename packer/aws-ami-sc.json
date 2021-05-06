@@ -128,6 +128,18 @@
           "destination": "/home/ubuntu/setSshPasswd.sh"
         },
         {
+          "type": "file",
+          "source": "setup-sc.sh",
+          "destination": "/home/ubuntu/setup-sc.sh"
+        },
+        {
+          "type": "shell",
+          "inline": [
+            "chmod +x /home/ubuntu/setup-sc.sh",
+            "sudo /home/ubuntu/setup-sc.sh"
+          ]
+        },
+        {
           "type": "shell",
           "inline": [
             "chmod +x /home/ubuntu/setSshPasswd.sh",
@@ -138,7 +150,8 @@
           "type": "shell",
           "inline": [
             "sudo rm /home/ubuntu/.env",
-            "sudo rm /home/ubuntu/setSshPasswd.sh"
+            "sudo rm /home/ubuntu/setSshPasswd.sh",
+            "sudo rm /home/ubuntu/setup-sc.sh"
           ]
         },
         {

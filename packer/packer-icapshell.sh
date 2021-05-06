@@ -133,7 +133,7 @@ swapoff -a && rm -f /swap.img && sed -i '/swap.img/d' /etc/fstab && echo Swap re
 update-grub
 
 # installing the wizard
-install -T ~/scripts/scripts/wizard/wizard.sh /usr/local/bin/wizard -m 0755
+install -T ~/scripts/scripts/wizard/cwizard.sh /usr/local/bin/wizard -m 0755
 
 # installing initconfig ( for running wizard on reboot )
 cp -f ~/scripts/scripts/bootscript/initconfig.service /etc/systemd/system/initconfigwizard.service
