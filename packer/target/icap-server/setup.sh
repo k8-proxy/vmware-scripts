@@ -53,7 +53,7 @@ cd ~/icap-infrastructure
 request_processing_repo="glasswallsolutions/icap-request-processing"
 request_processing_tag=$(yq read adaptation/values.yaml 'imagestore.requestprocessing.tag')
 echo "using $request_processing_repo:$request_processing_tag for icap-request-processing"
-sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+sudo docker login -u $DOCKER_USERNAME -p $DOCKER_NEW_PASSWORD
 sudo docker pull $request_processing_repo:$request_processing_tag
 sudo docker tag $request_processing_repo:$request_processing_tag localhost:30500/$request_processing_repo:$request_processing_tag
 sudo docker push localhost:30500/$request_processing_repo:$request_processing_tag
