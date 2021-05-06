@@ -73,7 +73,7 @@ git clone https://github.com/filetrust/icap-infrastructure.git -b $ICAP_SOW_BRAN
 cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
 cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
-wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq
+sudo snap install yq
 requestImage=$(yq eval '.imagestore.requestprocessing.tag' adaptation/values.yaml)
 sudo docker pull glasswallsolutions/icap-request-processing:$requestImage
 sudo docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
