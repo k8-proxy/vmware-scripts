@@ -26,7 +26,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli cont
 
 # install local docker registry
 sudo docker run -d -p 127.0.0.1:30500:5000 --restart always --name registry registry:2
-sudo docker login -u $DOCKER_USERNAME -p $DOCKER_NEW_PASSWORD 
+sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
 
 
 
@@ -56,6 +56,7 @@ git clone https://github.com/filetrust/icap-infrastructure.git -b $ICAP_SOW_BRAN
 cp  /tmp/icap-infrastructure-sow/adaptation/values.yaml adaptation/
 cp  /tmp/icap-infrastructure-sow/administration/values.yaml administration/
 cp  /tmp/icap-infrastructure-sow/ncfs/values.yaml ncfs/
+sudo snap install yq
 requestImage=$(yq eval '.imagestore.requestprocessing.tag' adaptation/values.yaml)
 sudo docker pull glasswallsolutions/icap-request-processing:$requestImage
 sudo docker tag glasswallsolutions/icap-request-processing:$requestImage localhost:30500/icap-request-processing:$requestImage
