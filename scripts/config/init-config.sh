@@ -79,3 +79,8 @@ sudo systemctl enable --now node_exporter
 
 # remove vmware scripts directory
 rm -rf ~/scripts/
+
+sudo tee -a /etc/cloud/cloud.cfg <<EOF
+preserve_hostname: true
+EOF
+sudo hostnamectl set-hostname glasswall
