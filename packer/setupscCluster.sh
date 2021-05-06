@@ -3,8 +3,9 @@ monitoring_username=$(cat /home/ubuntu/monitoring-username.txt)
 monitoring_password=$(cat /home/ubuntu/monitoring-password.txt)
 logging_username=$(cat /home/ubuntu/logging-username.txt)
 service_cluster=$(cat /home/ubuntu/service-cluster.txt)
-sed -i "s|8.8.8.8|$(cat /home/ubuntu/service-cluster-ip.txt)|" wc-coredns-configmap.yml
-kubectl apply -f wc-coredns-configmap.yml
+wget https://raw.githubusercontent.com/k8-proxy/vmware-scripts/csapi-ck8-filedrop/packer/wc-coredns-configmap.yml -O /home/ubuntu/wc-coredns-configmap.yml
+sed -i "s|8.8.8.8|$(cat /home/ubuntu/service-cluster-ip.txt)|" /home/ubuntu/wc-coredns-configmap.yml
+kubectl apply -f /home/ubuntu/wc-coredns-configmap.yml
 kubectl delete pod --namespace kube-system --selector k8s-app=kube-dns
 cat /home/ubuntu/cluster.txt | xargs -I {} kubectl patch prometheuses.monitoring.coreos.com kube-prometheus-stack-prometheus -n monitoring --type='json' -p '[{"op": "replace", "path": "/spec/externalLabels/cluster", "value":"'{}'"}]'
 echo "https://influxdb.${service_cluster}/api/v1/prom/write?db=workload_cluster&u=${monitoring_username}&p=${monitoring_password}" > /home/ubuntu/influxdb-url.txt
