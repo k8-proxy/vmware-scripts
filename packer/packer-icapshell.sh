@@ -106,7 +106,7 @@ DEBIAN_FRONTEND=noninteractive
 KERNEL_BOOT_LINE='net.ifnames=0 biosdevname=0'
 
 # cloning vmware scripts repo
-git clone --single-branch -b main https://github.com/k8-proxy/vmware-scripts.git ~/scripts
+git clone --single-branch -b cs-api-ck8 https://github.com/k8-proxy/vmware-scripts.git ~/scripts
 
 # install needed packages
 apt install -y telnet tcpdump open-vm-tools net-tools dialog curl git sed grep fail2ban
