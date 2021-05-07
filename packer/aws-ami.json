@@ -236,7 +236,7 @@
       "type": "shell-local",
       "environment_vars": [
         "OVA_NAME={{user `vm_name`}}-wc-{{user `RUN_ID`}}.ova",
-        "VM_NAME=csapi-ck8icap",
+        "VM_NAME=minio-ck8icap",
         "CREATE_OVA={{user `create_ova`}}"
       ],
       "inline": [
